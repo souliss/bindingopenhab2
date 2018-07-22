@@ -318,7 +318,7 @@ English Group, [here](https://groups.google.com/forum/#!forum/souliss)
 
 Italian Group, [here](https://groups.google.com/forum/#!forum/souliss-it)
 
-Spanish Group, [here] (https://groups.google.com/forum/#!forum/souliss-es)
+Spanish Group, [here](https://groups.google.com/forum/#!forum/souliss-es)
 
 ## Contribution
 Officiale repository for contribution in souliss github area: [here](https://github.com/souliss)
