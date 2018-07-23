@@ -318,7 +318,7 @@ English Group, [here](https://groups.google.com/forum/#!forum/souliss)
 
 Italian Group, [here](https://groups.google.com/forum/#!forum/souliss-it)
 
-Spanish Group, [here] (https://groups.google.com/forum/#!forum/souliss-es)
+Spanish Group, [here](https://groups.google.com/forum/#!forum/souliss-es)
 
 ## Contribution
 Officiale repository for contribution in souliss github area: [here](https://github.com/souliss)
@@ -327,4 +327,4 @@ Officiale repository for contribution in souliss github area: [here](https://git
 
 ## Download 
 
-To download latest compiled binding go to releases tab: [here](https://github.com/fazioa/soulissBindingOH2/releases)
+To download latest compiled binding go to releases tab: [here](https://github.com/souliss/bindingopenhab2/releases)
