@@ -29,7 +29,6 @@ public class SoulissBindingConstants {
     // public static final int PING_resendTimeoutInSeconds = 5;
 
     // List of all Thing Type UIDs
-    // public final static ThingTypeUID THING_TYPE_SAMPLE = new ThingTypeUID(BINDING_ID, "sample");
     public final static ThingTypeUID GATEWAY_THING_TYPE = new ThingTypeUID(BINDING_ID, "gateway");
 
     public final static String T11 = "t11";
@@ -39,8 +38,8 @@ public class SoulissBindingConstants {
     public final static String T16 = "t16";
     public final static String T18 = "t18";
     public final static String T19 = "t19";
-    public final static String T1A = "t1A";
-    public final static String LYT = "LYT";
+    public final static String T1A = "t1a";
+    // public final static String LYT = "lyt";
     public final static String T21 = "t21";
     public final static String T22 = "t22";
     public final static String T31 = "t31";
@@ -71,7 +70,7 @@ public class SoulissBindingConstants {
     public final static ThingTypeUID T18_THING_TYPE = new ThingTypeUID(BINDING_ID, T18);
     public final static ThingTypeUID T19_THING_TYPE = new ThingTypeUID(BINDING_ID, T19);
     public final static ThingTypeUID T1A_THING_TYPE = new ThingTypeUID(BINDING_ID, T1A);
-    public final static ThingTypeUID LYT_THING_TYPE = new ThingTypeUID(BINDING_ID, LYT);
+    // public final static ThingTypeUID LYT_THING_TYPE = new ThingTypeUID(BINDING_ID, LYT);
     public final static ThingTypeUID T21_THING_TYPE = new ThingTypeUID(BINDING_ID, T21);
     public final static ThingTypeUID T22_THING_TYPE = new ThingTypeUID(BINDING_ID, T22);
     public final static ThingTypeUID T31_THING_TYPE = new ThingTypeUID(BINDING_ID, T31);
@@ -96,10 +95,10 @@ public class SoulissBindingConstants {
 
     public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Sets.newHashSet(GATEWAY_THING_TYPE,
             T11_THING_TYPE, T12_THING_TYPE, T13_THING_TYPE, T14_THING_TYPE, T16_THING_TYPE, T18_THING_TYPE,
-            T19_THING_TYPE, T1A_THING_TYPE, LYT_THING_TYPE, T21_THING_TYPE, T22_THING_TYPE, T31_THING_TYPE,
-            T41_THING_TYPE, T51_THING_TYPE, T52_THING_TYPE, T53_THING_TYPE, T54_THING_TYPE, T55_THING_TYPE,
-            T56_THING_TYPE, T57_THING_TYPE, T58_THING_TYPE, T61_THING_TYPE, T62_THING_TYPE, T63_THING_TYPE,
-            T64_THING_TYPE, T65_THING_TYPE, T66_THING_TYPE, T67_THING_TYPE, T68_THING_TYPE, TOPICS_THING_TYPE);
+            T19_THING_TYPE, T1A_THING_TYPE, T21_THING_TYPE, T22_THING_TYPE, T31_THING_TYPE, T41_THING_TYPE,
+            T51_THING_TYPE, T52_THING_TYPE, T53_THING_TYPE, T54_THING_TYPE, T55_THING_TYPE, T56_THING_TYPE,
+            T57_THING_TYPE, T58_THING_TYPE, T61_THING_TYPE, T62_THING_TYPE, T63_THING_TYPE, T64_THING_TYPE,
+            T65_THING_TYPE, T66_THING_TYPE, T67_THING_TYPE, T68_THING_TYPE, TOPICS_THING_TYPE);
 
     // List of all Channel ids
     public final static String ONOFF_CHANNEL = "onoff";

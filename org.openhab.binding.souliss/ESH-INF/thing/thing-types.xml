@@ -178,7 +178,7 @@
             <bridge-type-ref id="gateway" />
         </supported-bridge-type-refs>
         <label>T19</label>
-        <description> Single Color LED Strip</description>
+        <description>Single Color LED Strip</description>
 
         <channels>
         <channel id="onoff" typeId="onoff"/>
@@ -198,7 +198,7 @@
             </parameter>
         </config-description>
     </thing-type>
-    <thing-type id="t1A">
+    <thing-type id="t1a">
         <supported-bridge-type-refs>
             <bridge-type-ref id="gateway" />
         </supported-bridge-type-refs>
