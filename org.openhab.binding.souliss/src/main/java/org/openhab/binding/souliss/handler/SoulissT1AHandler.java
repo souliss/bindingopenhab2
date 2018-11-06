@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  * @author Luca Remigio - Initial contribution
  */
 public class SoulissT1AHandler extends SoulissGenericTypical implements typicalCommonMethods {
-    private Logger logger = LoggerFactory.getLogger(SoulissT16Handler.class);
+    private Logger logger = LoggerFactory.getLogger(SoulissT1AHandler.class);
 
     public SoulissT1AHandler(Thing _thing) {
         super(_thing);
