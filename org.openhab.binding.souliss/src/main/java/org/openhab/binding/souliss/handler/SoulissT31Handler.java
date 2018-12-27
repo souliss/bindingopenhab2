@@ -17,7 +17,6 @@ import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.PrimitiveType;
-import org.eclipse.smarthome.core.types.RefreshType;
 import org.openhab.binding.souliss.SoulissBindingConstants;
 import org.openhab.binding.souliss.SoulissBindingProtocolConstants;
 import org.openhab.binding.souliss.handler.SoulissGenericTypical.typicalCommonMethods;
@@ -37,6 +36,8 @@ public class SoulissT31Handler extends SoulissGenericTypical implements typicalC
     DecimalType _setPointValue = DecimalType.ZERO;
     StringType _fanStateValue = StringType.EMPTY;
     StringType _powerState = StringType.EMPTY;
+    StringType _fireState = StringType.EMPTY;
+
     StringType _lastModeState = StringType.EMPTY;
     StringType _modeStateValue = StringType.EMPTY;
     private Logger logger = LoggerFactory.getLogger(SoulissT11Handler.class);
@@ -51,62 +52,64 @@ public class SoulissT31Handler extends SoulissGenericTypical implements typicalC
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
 
-        if (command instanceof RefreshType) {
-
-        } else if (command instanceof StringType) {
-            switch ((command).toString()) {
-                // FAN
-                case "HIGH":
-                    commandSEND(SoulissBindingProtocolConstants.Souliss_T3n_FanManual);
-                    commandSEND(SoulissBindingProtocolConstants.Souliss_T3n_FanHigh);
-                    _fanStateValue = StringType.valueOf("HIGH");
-                    break;
-                case "MEDIUM":
-                    commandSEND(SoulissBindingProtocolConstants.Souliss_T3n_FanManual);
-                    commandSEND(SoulissBindingProtocolConstants.Souliss_T3n_FanMed);
-                    _fanStateValue = StringType.valueOf("MEDIUM");
-                    break;
-                case "LOW":
-                    commandSEND(SoulissBindingProtocolConstants.Souliss_T3n_FanManual);
-                    commandSEND(SoulissBindingProtocolConstants.Souliss_T3n_FanLow);
-                    _fanStateValue = StringType.valueOf("LOW");
-                    break;
-                case "AUTO":
-                    commandSEND(SoulissBindingProtocolConstants.Souliss_T3n_FanAuto);
-                    _fanStateValue = StringType.valueOf("AUTO");
-                    break;
-                case "OFF":
-                    commandSEND(SoulissBindingProtocolConstants.Souliss_T3n_FanOff);
-                    _fanStateValue = StringType.valueOf("FANOFF");
-                    break;
-                // MODE
-                case "HEATING_MODE":
-                    commandSEND(SoulissBindingProtocolConstants.Souliss_T3n_Heating);
-                    _lastModeState = StringType.valueOf("HEAT");
-                    break;
-                case "COOLING_MODE":
-                    commandSEND(SoulissBindingProtocolConstants.Souliss_T3n_Cooling);
-                    _lastModeState = StringType.valueOf("COOL");
-                    break;
-                case "POWEREDOFF_MODE":
+        switch (channelUID.getId()) {
+            // FAN
+            case SoulissBindingConstants.T31_SYSTEM_CHANNEL:
+                if (command.equals(OnOffType.OFF)) {
                     commandSEND(SoulissBindingProtocolConstants.Souliss_T3n_ShutDown);
-                    _lastModeState = StringType.valueOf("POWER OFF");
-                    break;
-            }
-        } else if (command instanceof OnOffType) {
-            if (command.equals(OnOffType.ON)) {
+                } else {
+                    if (_modeStateValue.equals(SoulissBindingConstants.T31_HEATINGMODE_MESSAGE_MODE_CHANNEL)) {
+                        commandSEND(SoulissBindingProtocolConstants.Souliss_T3n_Heating);
+                    } else {
+                        commandSEND(SoulissBindingProtocolConstants.Souliss_T3n_Cooling);
+                    }
+                }
+                break;
+            case SoulissBindingConstants.T31_MODE_CHANNEL:
+                if (command.equals(SoulissBindingConstants.T31_HEATINGMODE_MESSAGE_MODE_CHANNEL)) {
+                    commandSEND(SoulissBindingProtocolConstants.Souliss_T3n_Heating);
+                } else {
+                    commandSEND(SoulissBindingProtocolConstants.Souliss_T3n_Cooling);
+                }
+                break;
+            case SoulissBindingConstants.T31_BUTTON_CHANNEL:
                 commandSEND(SoulissBindingProtocolConstants.Souliss_T3n_AsMeasured);
-            }
-
-        } else if (command instanceof DecimalType) {
-
-            int uu = HalfFloatUtils.fromFloat(((DecimalType) command).floatValue());
-            byte B2 = (byte) (uu >> 8);
-            byte B1 = (byte) uu;
-            // setpoint command
-            commandSEND(SoulissBindingProtocolConstants.Souliss_T31_Use_Of_Slot_SETPOINT_COMMAND, B1, B2);
+                break;
+            case SoulissBindingConstants.T31_FAN_CHANNEL:
+                switch (command.toString()) {
+                    case SoulissBindingConstants.T31_FANHIGH_MESSAGE_FAN_CHANNEL:
+                        commandSEND(SoulissBindingProtocolConstants.Souliss_T3n_FanManual);
+                        commandSEND(SoulissBindingProtocolConstants.Souliss_T3n_FanHigh);
+                        _fanStateValue = StringType.valueOf(SoulissBindingConstants.T31_FANHIGH_MESSAGE_FAN_CHANNEL);
+                        break;
+                    case SoulissBindingConstants.T31_FANMEDIUM_MESSAGE_FAN_CHANNEL:
+                        commandSEND(SoulissBindingProtocolConstants.Souliss_T3n_FanManual);
+                        commandSEND(SoulissBindingProtocolConstants.Souliss_T3n_FanMed);
+                        _fanStateValue = StringType.valueOf(SoulissBindingConstants.T31_FANMEDIUM_MESSAGE_FAN_CHANNEL);
+                        break;
+                    case SoulissBindingConstants.T31_FANLOW_MESSAGE_FAN_CHANNEL:
+                        commandSEND(SoulissBindingProtocolConstants.Souliss_T3n_FanManual);
+                        commandSEND(SoulissBindingProtocolConstants.Souliss_T3n_FanLow);
+                        _fanStateValue = StringType.valueOf(SoulissBindingConstants.T31_FANLOW_MESSAGE_FAN_CHANNEL);
+                        break;
+                    case SoulissBindingConstants.T31_FANAUTO_MESSAGE_FAN_CHANNEL:
+                        commandSEND(SoulissBindingProtocolConstants.Souliss_T3n_FanAuto);
+                        _fanStateValue = StringType.valueOf(SoulissBindingConstants.T31_FANAUTO_MESSAGE_FAN_CHANNEL);
+                        break;
+                    case SoulissBindingConstants.T31_FANOFF_MESSAGE_FAN_CHANNEL:
+                        commandSEND(SoulissBindingProtocolConstants.Souliss_T3n_FanOff);
+                        _fanStateValue = StringType.valueOf(SoulissBindingConstants.T31_FANOFF_MESSAGE_FAN_CHANNEL);
+                        break;
+                }
+                break;
+            case SoulissBindingConstants.T31_SETPOINT_CHANNEL:
+                int uu = HalfFloatUtils.fromFloat(((DecimalType) command).floatValue());
+                byte B2 = (byte) (uu >> 8);
+                byte B1 = (byte) uu;
+                // setpoint command
+                commandSEND(SoulissBindingProtocolConstants.Souliss_T31_Use_Of_Slot_SETPOINT_COMMAND, B1, B2);
+                break;
         }
-
     }
 
     @Override
@@ -123,39 +126,54 @@ public class SoulissT31Handler extends SoulissGenericTypical implements typicalC
         if (_state != null) {
             if (_state instanceof StringType) {
                 switch (_state.toString()) {
-                    case SoulissBindingConstants.T31_FANLOW_MESSAGE_CHANNEL:
-                    case SoulissBindingConstants.T31_FANMEDIUM_MESSAGE_CHANNEL:
-                    case SoulissBindingConstants.T31_FANHIGH_MESSAGE_CHANNEL:
-                    case SoulissBindingConstants.T31_FANAUTO_MESSAGE_CHANNEL:
-                    case SoulissBindingConstants.T31_FANOFF_MESSAGE_CHANNEL:
+                    case SoulissBindingConstants.T31_FANLOW_MESSAGE_FAN_CHANNEL:
+                    case SoulissBindingConstants.T31_FANMEDIUM_MESSAGE_FAN_CHANNEL:
+                    case SoulissBindingConstants.T31_FANHIGH_MESSAGE_FAN_CHANNEL:
+                    case SoulissBindingConstants.T31_FANAUTO_MESSAGE_FAN_CHANNEL:
+                    case SoulissBindingConstants.T31_FANOFF_MESSAGE_FAN_CHANNEL:
                         if (!_fanStateValue.equals(_state)) {
                             this.updateState(SoulissBindingConstants.T31_FAN_CHANNEL, (StringType) _state);
                             _fanStateValue = (StringType) _state;
                         }
                         break;
 
-                    case SoulissBindingConstants.T31_HEATINGMODE_MESSAGE_CHANNEL:
-                    case SoulissBindingConstants.T31_COOLINGMODE_MESSAGE_CHANNEL:
+                    case SoulissBindingConstants.T31_HEATINGMODE_MESSAGE_MODE_CHANNEL:
+                    case SoulissBindingConstants.T31_COOLINGMODE_MESSAGE_MODE_CHANNEL:
                         if (!_modeStateValue.equals(_state)) {
                             this.updateState(SoulissBindingConstants.T31_MODE_CHANNEL, (StringType) _state);
                             _modeStateValue = (StringType) _state;
                         }
-                        if (_powerState.equals(SoulissBindingConstants.T31_POWEREDOFF_MESSAGE_CHANNEL)) {
-                            _powerState = (StringType) _state;
-                            this.updateState(SoulissBindingConstants.T31_STATUS_CHANNEL, OnOffType.ON);
-
-                        }
-
                         break;
 
-                    case SoulissBindingConstants.T31_POWEREDOFF_MESSAGE_CHANNEL:
-                        if (!_powerState.equals(SoulissBindingConstants.T31_POWEREDOFF_MESSAGE_CHANNEL)) {
+                    case SoulissBindingConstants.T31_OFF_MESSAGE_SYSTEM_CHANNEL:
+                        if (!_powerState.equals(_state)) {
+                            this.updateState(SoulissBindingConstants.T31_SYSTEM_CHANNEL, OnOffType.OFF);
                             _powerState = (StringType) _state;
-                            this.updateState(SoulissBindingConstants.T31_STATUS_CHANNEL, OnOffType.OFF);
+                        }
+                        break;
+                    case SoulissBindingConstants.T31_ON_MESSAGE_SYSTEM_CHANNEL:
+                        if (!_powerState.equals(_state)) {
+                            this.updateState(SoulissBindingConstants.T31_SYSTEM_CHANNEL, OnOffType.ON);
+                            _powerState = (StringType) _state;
+                        }
+                        break;
+
+                    case SoulissBindingConstants.T31_ON_MESSAGE_FIRE_CHANNEL:
+                        if (!_fireState.equals(_state)) {
+                            this.updateState(SoulissBindingConstants.T31_FIRE_CHANNEL, OnOffType.ON);
+                            _powerState = (StringType) _state;
+                        }
+                        break;
+                    case SoulissBindingConstants.T31_OFF_MESSAGE_FIRE_CHANNEL:
+                        if (!_fireState.equals(_state)) {
+                            this.updateState(SoulissBindingConstants.T31_FIRE_CHANNEL, OnOffType.OFF);
+                            _powerState = (StringType) _state;
                         }
                         break;
                 }
+
             }
+
         }
     }
 

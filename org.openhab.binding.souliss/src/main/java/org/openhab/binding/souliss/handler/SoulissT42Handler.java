@@ -16,7 +16,6 @@ import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.PrimitiveType;
-import org.eclipse.smarthome.core.types.RefreshType;
 import org.openhab.binding.souliss.SoulissBindingConstants;
 import org.openhab.binding.souliss.SoulissBindingProtocolConstants;
 import org.openhab.binding.souliss.handler.SoulissGenericTypical.typicalCommonMethods;
@@ -24,18 +23,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The {@link SoulissT41Handler} is responsible for handling commands, which are
+ * The {@link SoulissT42Handler} is responsible for handling commands, which are
  * sent to one of the channels.
  *
- * @author Luca Remigio - Initial contribution
+ * @author Tonino Fazio - Initial contribution
  */
-public class SoulissT41Handler extends SoulissGenericTypical implements typicalCommonMethods {
+public class SoulissT42Handler extends SoulissGenericTypical implements typicalCommonMethods {
 
     Configuration gwConfigurationMap;
 
     private Logger logger = LoggerFactory.getLogger(SoulissT11Handler.class);
 
-    public SoulissT41Handler(Thing _thing) {
+    public SoulissT42Handler(Thing _thing) {
         super(_thing);
         thing = _thing;
     }
@@ -43,23 +42,7 @@ public class SoulissT41Handler extends SoulissGenericTypical implements typicalC
     // called on every status change or change request
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
-
-        if (command instanceof RefreshType) {
-
-        } else if (channelUID.getAsString().split(":")[3].equals(SoulissBindingConstants.T4n_ONOFFALARM_CHANNEL)) {
-            if (command instanceof OnOffType) {
-
-                switch (command.toFullString()) {
-                    case "OFF":
-                        commandSEND(SoulissBindingProtocolConstants.Souliss_T4n_NotArmed);
-                        break;
-                    case "ON":
-                        commandSEND(SoulissBindingProtocolConstants.Souliss_T4n_Armed);
-                        break;
-                }
-
-            }
-        } else if (channelUID.getAsString().split(":")[3].equals(SoulissBindingConstants.T4n_REARMALARM_CHANNEL)) {
+        if (channelUID.getAsString().split(":")[3].equals(SoulissBindingConstants.T4n_REARMALARM_CHANNEL)) {
             if (command instanceof OnOffType) {
 
                 switch (command.toFullString()) {
@@ -86,9 +69,7 @@ public class SoulissT41Handler extends SoulissGenericTypical implements typicalC
     @Override
     public void setState(PrimitiveType _state) {
         if (_state != null) {
-            if (_state instanceof OnOffType) {
-                this.updateState(SoulissBindingConstants.T4n_ONOFFALARM_CHANNEL, (OnOffType) _state);
-            } else if (_state instanceof StringType) {
+            if (_state instanceof StringType) {
                 switch (String.valueOf(_state)) {
                     case SoulissBindingConstants.T4n_ALARMON_MESSAGE_CHANNEL:
                         this.updateState(SoulissBindingConstants.T4n_STATUSALARM_CHANNEL, OnOffType.ON);
@@ -96,8 +77,6 @@ public class SoulissT41Handler extends SoulissGenericTypical implements typicalC
                     case SoulissBindingConstants.T4n_ALARMOFF_MESSAGE_CHANNEL:
                         this.updateState(SoulissBindingConstants.T4n_STATUSALARM_CHANNEL, OnOffType.OFF);
                         break;
-                    // case SoulissBindingConstants.T41_REARMOFF_MESSAGE_CHANNEL:
-                    // this.updateState(SoulissBindingConstants.T4n_REARMALARM_CHANNEL, OnOffType.OFF);
                 }
             }
             // // Resetto il tasto di rearm. Questo perchè se premuto non torna da solo in off

@@ -10,6 +10,8 @@ package org.openhab.binding.souliss.handler;
 import java.math.BigDecimal;
 import java.net.DatagramSocket;
 import java.util.Iterator;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.thing.Bridge;
@@ -23,7 +25,7 @@ import org.openhab.binding.souliss.SoulissBindingConstants;
 import org.openhab.binding.souliss.SoulissBindingUDPConstants;
 import org.openhab.binding.souliss.internal.SoulissDatagramSocketFactory;
 import org.openhab.binding.souliss.internal.protocol.SoulissBindingNetworkParameters;
-import org.openhab.binding.souliss.internal.protocol.SoulissBindingUDPServerThread;
+import org.openhab.binding.souliss.internal.protocol.SoulissBindingUDPServerJob;
 import org.openhab.binding.souliss.internal.protocol.SoulissCommonCommands;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +40,7 @@ public class SoulissGatewayHandler extends BaseBridgeHandler {
 
     private Logger logger = LoggerFactory.getLogger(SoulissGatewayHandler.class);
     public DatagramSocket datagramSocket_defaultPort;
-    SoulissBindingUDPServerThread UDP_Server_DefaultPort = null;
+    SoulissBindingUDPServerJob UDP_Server_DefaultPort_RunnableClass = null;
 
     boolean bGatewayDetected = false;
 
@@ -46,7 +48,6 @@ public class SoulissGatewayHandler extends BaseBridgeHandler {
 
     public int pingRefreshInterval;
     public int subscriptionRefreshInterval;
-    public int afterThingDetection_subscriptionRefreshInterval = 5000; // millis
     public boolean thereIsAThingDetection = true;
     public int healthRefreshInterval;
     private Bridge bridge;
@@ -56,10 +57,12 @@ public class SoulissGatewayHandler extends BaseBridgeHandler {
     public short nodeIndex;
     public String IPAddressOnLAN;
     private int nodes;
-    private int maxnodes;
     private int maxTypicalXnode;
-    private int maxrequests;
     private int countPING_KO = 0;
+    private int maxnodes = 0;
+    private int maxrequests = 0;
+
+    private ScheduledFuture<?> UDPserverJob_DefaultPort;
 
     public SoulissGatewayHandler(Bridge _bridge) {
         super(_bridge);
@@ -148,24 +151,36 @@ public class SoulissGatewayHandler extends BaseBridgeHandler {
         }
 
         // START SERVER ON DEFAULT PORT - Used for topics
-        if (UDP_Server_DefaultPort == null) {
+        if (UDP_Server_DefaultPort_RunnableClass == null) {
             logger.debug("Starting UDP server on Souliss Default Port for Topics (Publish&Subcribe)");
             datagramSocket_defaultPort = SoulissDatagramSocketFactory.getSocketDatagram(souliss_gateway_port);
             if (datagramSocket_defaultPort != null) {
-                UDP_Server_DefaultPort = new SoulissBindingUDPServerThread(datagramSocket_defaultPort,
+                UDP_Server_DefaultPort_RunnableClass = new SoulissBindingUDPServerJob(datagramSocket_defaultPort,
                         SoulissBindingNetworkParameters.discoverResult);
-                UDP_Server_DefaultPort.start();
+                UDPserverJob_DefaultPort = scheduler.scheduleAtFixedRate(UDP_Server_DefaultPort_RunnableClass, 100,
+                        SoulissBindingConstants.SERVER_cicleInMillis, TimeUnit.MILLISECONDS);
             }
         }
 
-        SoulissGatewayThread soulissGWThread = new SoulissGatewayThread(bridge);
-        soulissGWThread.start();
+        // START JOB PING
+
+        SoulissGatewayJobPing SoulissGatewayJobPingRunnable = new SoulissGatewayJobPing(bridge);
+        scheduler.scheduleWithFixedDelay(SoulissGatewayJobPingRunnable, 2,
+                SoulissGatewayJobPingRunnable.get_pingRefreshInterval(), TimeUnit.SECONDS);
+
+        SoulissGatewayJobSubscription SoulissGatewayJobSubscriptionRunnable = new SoulissGatewayJobSubscription(bridge);
+        scheduler.scheduleWithFixedDelay(SoulissGatewayJobSubscriptionRunnable, 0,
+                SoulissGatewayJobSubscriptionRunnable.get_subscriptionRefreshInterval(), TimeUnit.MINUTES);
+
+        SoulissGatewayJobHealty SoulissGatewayJobHealtyRunnable = new SoulissGatewayJobHealty(bridge);
+        scheduler.scheduleWithFixedDelay(SoulissGatewayJobHealtyRunnable, 5,
+                SoulissGatewayJobHealtyRunnable.get_healthRefreshInterval(), TimeUnit.SECONDS);
     }
 
     @Override
     public void handleRemoval() {
         SoulissBindingNetworkParameters.removeGateway(Byte.parseByte(IPAddressOnLAN.split("\\.")[3]));
-        UDP_Server_DefaultPort = null;
+        UDP_Server_DefaultPort_RunnableClass = null;
         logger.debug("Gateway handler removing");
     }
 

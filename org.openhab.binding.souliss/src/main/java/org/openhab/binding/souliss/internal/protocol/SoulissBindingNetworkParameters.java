@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Thing;
-import org.openhab.binding.souliss.internal.discovery.SoulissDiscoverThread.DiscoverResult;
+import org.openhab.binding.souliss.internal.discovery.SoulissDiscoverJob.DiscoverResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +41,7 @@ public class SoulissBindingNetworkParameters {
 
     private static DatagramSocket datagramSocket;
     public static DiscoverResult discoverResult;
-    private static SoulissBindingUDPServerThread UDP_Server;
+    private static SoulissBindingUDPServerJob UDP_Server;
 
     public static DatagramSocket getDatagramSocket() {
         return datagramSocket;
@@ -86,14 +86,5 @@ public class SoulissBindingNetworkParameters {
 
     public static void removeTopic(String sUID) {
         hashTableTopics.remove(sUID);
-    }
-
-    public static void setUDPServer(SoulissBindingUDPServerThread _UDP_Server) {
-        UDP_Server = _UDP_Server;
-
-    }
-
-    public static SoulissBindingUDPServerThread getUDPServer() {
-        return UDP_Server;
     }
 }

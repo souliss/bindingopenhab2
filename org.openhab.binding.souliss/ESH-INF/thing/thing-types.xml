@@ -271,10 +271,15 @@
         <description>Temperature control with cooling and heating mode</description>
         <channels>
             <channel id="fan" typeId="fan-channel" />
-            <channel id="mode" typeId="mode-channel" />
-            <channel id="status" typeId="buttonReadOnly">
-                <label>Status</label>
-            </channel>
+            <channel id="mode" typeId="mode-channel">
+            <label>Mode: heating/cooling</label>
+             </channel>
+            <channel id="system" typeId="onoff">
+            <label>System</label>
+             </channel>
+            <channel id="fire" typeId="buttonReadOnly">
+            <label>Fire</label>
+             </channel>
             <channel id="setpoint" typeId="float6n" />
             <channel id="setAsMeasured" typeId="button">
                 <label>As measured</label>
@@ -295,20 +300,39 @@
             <channel id="statusAlarm" typeId="buttonReadOnly">
                 <label>Alarm status</label>
             </channel>
-            <channel id="onOffAlarm" typeId="button">
+            <channel id="onOffAlarm" typeId="onoff">
                 <label>Alarm ON/OFF</label>
             </channel>
             <channel id="rearmAlarm" typeId="button">
                 <label>Rearm</label>
             </channel>
-<!--             <channel id="resetAlarm" typeId="button"> -->
-<!--                 <label>Reset Alarm</label> -->
-<!--             </channel> -->
             <channel id="lastStatusStored" typeId="lastStatusStored" />
             <channel id="healty" typeId="healty" />
             
         </channels>
     </thing-type>
+    
+   <thing-type id="t42">
+        <supported-bridge-type-refs>
+            <bridge-type-ref id="gateway"/>
+        </supported-bridge-type-refs>
+        <label>T42</label>
+        <description>Anti-theft integration (Peer)</description>
+        <channels>
+            <channel id="statusAlarm" typeId="buttonReadOnly">
+                <label>Alarm status</label>
+            </channel>
+<channel id="onOffAlarm" typeId="onoff">
+                <label>Alarm ON/OFF</label>
+            </channel>
+              <channel id="rearmAlarm" typeId="button">
+                <label>Rearm</label>
+            </channel>
+            <channel id="lastStatusStored" typeId="lastStatusStored" />
+            <channel id="healty" typeId="healty" />
+        </channels>
+    </thing-type>
+
 
 <thing-type id="t51">
         <supported-bridge-type-refs>
@@ -551,7 +575,6 @@
       <options>
         <option value="COOLING_MODE">Cool</option>
         <option value="HEATING_MODE">Heat</option>
-        <option value="POWEREDOFF_MODE">Powered off</option>
       </options>
     </state>
     </channel-type>
@@ -619,6 +642,9 @@
 		<description>Light on/off</description>
 		<state readOnly="true" />
 	</channel-type>
+	
+	
+	
 	<channel-type id="stateOpenClose">
         <item-type>Contact</item-type>
         <label>State Open/Closed</label>

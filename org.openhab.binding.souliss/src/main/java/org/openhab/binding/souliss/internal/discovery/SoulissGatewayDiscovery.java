@@ -17,6 +17,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.smarthome.config.discovery.AbstractDiscoveryService;
 import org.eclipse.smarthome.config.discovery.DiscoveryResult;
@@ -26,9 +28,9 @@ import org.openhab.binding.souliss.SoulissBindingConstants;
 import org.openhab.binding.souliss.SoulissBindingProtocolConstants;
 import org.openhab.binding.souliss.handler.SoulissGatewayHandler;
 import org.openhab.binding.souliss.internal.SoulissDatagramSocketFactory;
-import org.openhab.binding.souliss.internal.discovery.SoulissDiscoverThread.DiscoverResult;
+import org.openhab.binding.souliss.internal.discovery.SoulissDiscoverJob.DiscoverResult;
 import org.openhab.binding.souliss.internal.protocol.SoulissBindingNetworkParameters;
-import org.openhab.binding.souliss.internal.protocol.SoulissBindingUDPServerThread;
+import org.openhab.binding.souliss.internal.protocol.SoulissBindingUDPServerJob;
 import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,33 +43,14 @@ import org.slf4j.LoggerFactory;
  */
 public class SoulissGatewayDiscovery extends AbstractDiscoveryService implements DiscoverResult {
     private Logger logger = LoggerFactory.getLogger(SoulissGatewayDiscovery.class);
-    private SoulissDiscoverThread soulissDiscoverThread;
+    private SoulissDiscoverJob soulissDiscoverRunnableClass = null;
     private ThingUID gatewayUID;
     // private ScheduledFuture<?> schedulerFuture;
     private DatagramSocket datagramSocket;
-    SoulissBindingUDPServerThread UDP_Server = null;
+    SoulissBindingUDPServerJob UDP_Server_RunnableClass = null;
 
-    // class DetectTask extends TimerTask {
-    // @Override
-    // public void run() {
-    // soulissDiscoverThread.sendDiscover(scheduler);
-    // }
-    // }
-
-    private void startDiscoveryService() {
-        if (soulissDiscoverThread == null) {
-            try {
-                soulissDiscoverThread = new SoulissDiscoverThread(datagramSocket, this,
-                        SoulissBindingConstants.DISCOVERY_resendTimeoutInMillis,
-                        SoulissBindingConstants.DISCOVERY_TimeoutInSeconds,
-                        SoulissBindingConstants.DISCOVERY_resendAttempts);
-            } catch (SocketException e) {
-                logger.error("Opening the souliss discovery service failed. " + e.getLocalizedMessage());
-                return;
-            }
-            soulissDiscoverThread.scan();
-        }
-    }
+    private ScheduledFuture<?> discoveryJob;
+    private ScheduledFuture<?> UDPserverJob;
 
     public SoulissGatewayDiscovery() throws IllegalArgumentException, UnknownHostException {
         super(SoulissBindingConstants.SUPPORTED_THING_TYPES_UIDS, SoulissBindingConstants.DISCOVERY_TimeoutInSeconds,
@@ -89,10 +72,12 @@ public class SoulissGatewayDiscovery extends AbstractDiscoveryService implements
             SoulissBindingNetworkParameters.setDatagramSocket(datagramSocket);
 
             logger.debug("Starting UDP server on Preferred Local Port (random if it is zero)");
-            UDP_Server = new SoulissBindingUDPServerThread(datagramSocket,
+            UDP_Server_RunnableClass = new SoulissBindingUDPServerJob(datagramSocket,
                     SoulissBindingNetworkParameters.discoverResult);
-            SoulissBindingNetworkParameters.setUDPServer(UDP_Server);
-            UDP_Server.start();
+
+            UDPserverJob = scheduler.scheduleAtFixedRate(UDP_Server_RunnableClass, 100,
+                    SoulissBindingConstants.SERVER_cicleInMillis, TimeUnit.MILLISECONDS);
+
         } else {
             logger.debug("Error - datagramSocket is null - Server not started");
         }
@@ -142,15 +127,34 @@ public class SoulissGatewayDiscovery extends AbstractDiscoveryService implements
     @Override
     protected void startScan() {
         logger.debug("Starting Scan Service");
-        startDiscoveryService();
-        soulissDiscoverThread.start();
+
+        // create discovery class
+        if (soulissDiscoverRunnableClass == null) {
+            try {
+
+                soulissDiscoverRunnableClass = new SoulissDiscoverJob(datagramSocket, this);
+            } catch (SocketException e) {
+                logger.error("Opening the souliss discovery service failed. " + e.getLocalizedMessage());
+                return;
+            }
+
+        }
+        // create discovery job, that run discovery class
+        if (soulissDiscoverRunnableClass != null) {
+            discoveryJob = scheduler.scheduleAtFixedRate(soulissDiscoverRunnableClass, 100,
+                    SoulissBindingConstants.DISCOVERY_resendTimeoutInMillis, TimeUnit.MILLISECONDS);
+            logger.info("Start Discovery Job");
+        }
 
     }
 
     @Override
     protected synchronized void stopScan() {
-        if (soulissDiscoverThread != null) {
-            soulissDiscoverThread = null;
+        if (discoveryJob != null) {
+            discoveryJob.cancel(false);
+            discoveryJob = null;
+            soulissDiscoverRunnableClass = null;
+            logger.info("Discovery Job Stopped");
         }
         super.stopScan();
     }
@@ -230,6 +234,10 @@ public class SoulissGatewayDiscovery extends AbstractDiscoveryService implements
                 case SoulissBindingProtocolConstants.Souliss_T41_Antitheft_Main:
                     thingUID = new ThingUID(SoulissBindingConstants.T41_THING_TYPE, sNodeId);
                     label = "T41: node " + node + ", slot " + slot;
+                    break;
+                case SoulissBindingProtocolConstants.Souliss_T42_Antitheft_Peer:
+                    thingUID = new ThingUID(SoulissBindingConstants.T42_THING_TYPE, sNodeId);
+                    label = "T42: node " + node + ", slot " + slot;
                     break;
                 case SoulissBindingProtocolConstants.Souliss_T31:
                     thingUID = new ThingUID(SoulissBindingConstants.T31_THING_TYPE, sNodeId);

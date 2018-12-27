@@ -1,3 +1,5 @@
+For updates go to official repository at [https://github.com/souliss/bindingopenhab2](https://github.com/souliss/bindingopenhab2)
+
 # Souliss Binding
 
 [Souliss](http://www.souliss.net/) is a networking framework for Arduino and compatibles boards, and is designed to let you easily build a smart home that is distributed over multiple boards via Ethernet, WiFi, wireless point-to-point and RS485 bus. 
@@ -6,7 +8,7 @@ Souliss is an open-source and community driven project, you can use the [wiki](h
 
 ## Prerequisites
 
-The binding requires a deployed network.  As a minimum, you need one Souliss node with Ethernet access configured as a [Gateway](https://github.com/souliss/souliss/wiki/Gateway). A Gateway is a special node that is able to communicate with the user interfaces. The binding interacts as a user interface for Souliss.
+The binding requires a deployed network.  As a minimum, you need one Souliss node with Ethernet or WiFi access configured as a [Gateway](https://github.com/souliss/souliss/wiki/Gateway). A Gateway is a special node that is able to communicate with the user interfaces. The binding interacts as a user interface for Souliss.
 
 A starting point is the [Souliss wiki](https://github.com/souliss/souliss/wiki). The best is to start with a single node and connect with SoulissApp. The code for networking activities of this binding is based on [SoulissApp](https://github.com/souliss/souliss/wiki/SoulissApp) code, so once connected with SoulissApp, you can move to openHAB directly.
 
@@ -318,7 +320,7 @@ English Group, [here](https://groups.google.com/forum/#!forum/souliss)
 
 Italian Group, [here](https://groups.google.com/forum/#!forum/souliss-it)
 
-Spanish Group, [here](https://groups.google.com/forum/#!forum/souliss-es)
+Spanish Group, [here] (https://groups.google.com/forum/#!forum/souliss-es)
 
 ## Contribution
 Officiale repository for contribution in souliss github area: [here](https://github.com/souliss)
@@ -327,4 +329,4 @@ Officiale repository for contribution in souliss github area: [here](https://git
 
 ## Download 
 
-To download latest compiled binding go to releases tab: [here](https://github.com/souliss/bindingopenhab2/releases)
+To download latest compiled binding go to releases tab: [here](https://github.com/fazioa/soulissBindingOH2/releases)

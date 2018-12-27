@@ -40,6 +40,7 @@ import org.openhab.binding.souliss.handler.SoulissT1AHandler;
 import org.openhab.binding.souliss.handler.SoulissT22Handler;
 import org.openhab.binding.souliss.handler.SoulissT31Handler;
 import org.openhab.binding.souliss.handler.SoulissT41Handler;
+import org.openhab.binding.souliss.handler.SoulissT42Handler;
 import org.openhab.binding.souliss.handler.SoulissT5nHandler;
 import org.openhab.binding.souliss.handler.SoulissT61Handler;
 import org.openhab.binding.souliss.handler.SoulissT62Handler;
@@ -50,7 +51,7 @@ import org.openhab.binding.souliss.handler.SoulissT66Handler;
 import org.openhab.binding.souliss.handler.SoulissT67Handler;
 import org.openhab.binding.souliss.handler.SoulissT68Handler;
 import org.openhab.binding.souliss.handler.SoulissTopicsHandler;
-import org.openhab.binding.souliss.internal.discovery.SoulissDiscoverThread.DiscoverResult;
+import org.openhab.binding.souliss.internal.discovery.SoulissDiscoverJob.DiscoverResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -155,7 +156,8 @@ public class SoulissBindingUDPDecoder {
                 decodeActionMessages(lastByteGatewayIP, macacoPck);
                 break;
             default:
-                logger.debug("Received functional code: 0x" + Integer.toHexString(functionalCode) + " - unused");
+                logger.debug("Received functional code: 0x" + Integer.toHexString(functionalCode)
+                        + " - unused by OH Binding");
         }
     }
 
@@ -419,7 +421,6 @@ public class SoulissBindingUDPDecoder {
                                     logger.debug("Decoding " + SoulissBindingConstants.T11 + " packet");
                                     typicalState = getOHState_OnOff_FromSoulissVal(sVal);
                                     ((SoulissT11Handler) handler).setState(typicalState);
-                                    // cercare di capire come forzare un update
                                     break;
                                 case SoulissBindingConstants.T12:
                                     logger.debug("Decoding " + SoulissBindingConstants.T12 + " packet");
@@ -443,7 +444,6 @@ public class SoulissBindingUDPDecoder {
                                     typicalState = getOHState_OnOff_FromSoulissVal(sVal);
                                     ((SoulissT13Handler) handler).setState(typicalState);
                                     ((SoulissT13Handler) handler).setState(getOHState_OpenClose_FromSoulissVal(sVal));
-
                                     break;
                                 case SoulissBindingConstants.T14:
                                     logger.debug("Decoding " + SoulissBindingConstants.T14 + " packet");
@@ -535,60 +535,55 @@ public class SoulissBindingUDPDecoder {
                                             + " - bit6 (Manual/automatic fan mode): " + getBitState(sVal, 6)
                                             + " - bit7 (heating/cooling mode): " + getBitState(sVal, 7));
 
+                                    String sMessage = "";
                                     switch (getBitState(sVal, 0)) {
                                         case 0:
-                                            ((SoulissT31Handler) handler).setState(StringType
-                                                    .valueOf(SoulissBindingConstants.T31_POWEREDOFF_MESSAGE_CHANNEL));
+                                            sMessage = SoulissBindingConstants.T31_OFF_MESSAGE_SYSTEM_CHANNEL;
                                             break;
                                         case 1:
-                                            switch (getBitState(sVal, 7)) {
-                                                case 0:
-                                                    ((SoulissT31Handler) handler).setState(StringType.valueOf(
-                                                            SoulissBindingConstants.T31_HEATINGMODE_MESSAGE_CHANNEL));
-
-                                                    break;
-                                                case 1:
-                                                    ((SoulissT31Handler) handler).setState(StringType.valueOf(
-                                                            SoulissBindingConstants.T31_COOLINGMODE_MESSAGE_CHANNEL));
-                                                    break;
-                                            }
+                                            sMessage = SoulissBindingConstants.T31_ON_MESSAGE_SYSTEM_CHANNEL;
                                             break;
                                     }
+                                    ((SoulissT31Handler) handler).setState(StringType.valueOf(sMessage));
+
+                                    switch (getBitState(sVal, 7)) {
+                                        case 0:
+                                            sMessage = SoulissBindingConstants.T31_HEATINGMODE_MESSAGE_MODE_CHANNEL;
+                                            break;
+                                        case 1:
+                                            sMessage = SoulissBindingConstants.T31_COOLINGMODE_MESSAGE_MODE_CHANNEL;
+                                            break;
+                                    }
+                                    ((SoulissT31Handler) handler).setState(StringType.valueOf(sMessage));
 
                                     // button indicante se il sistema sta andando o meno
                                     switch (getBitState(sVal, 1) + getBitState(sVal, 2)) {
                                         case 0:
-                                            ((SoulissT31Handler) handler).setState(StringType
-                                                    .valueOf(SoulissBindingConstants.T31_POWEROFF_MESSAGE_CHANNEL));
+                                            sMessage = SoulissBindingConstants.T31_OFF_MESSAGE_FIRE_CHANNEL;
                                             break;
-
                                         case 1:
-                                            ((SoulissT31Handler) handler).setState(StringType
-                                                    .valueOf(SoulissBindingConstants.T31_POWERON_MESSAGE_CHANNEL));
+                                            sMessage = SoulissBindingConstants.T31_ON_MESSAGE_FIRE_CHANNEL;
                                             break;
                                     }
+                                    ((SoulissT31Handler) handler).setState(StringType.valueOf(sMessage));
 
                                     // FAN SPEED
                                     switch (getBitState(sVal, 3) + getBitState(sVal, 4) + getBitState(sVal, 5)) {
                                         case 0:
-                                            ((SoulissT31Handler) handler).setState(StringType
-                                                    .valueOf(SoulissBindingConstants.T31_FANOFF_MESSAGE_CHANNEL));
-
+                                            sMessage = SoulissBindingConstants.T31_FANOFF_MESSAGE_FAN_CHANNEL;
                                             break;
                                         case 1:
-                                            ((SoulissT31Handler) handler).setState(StringType
-                                                    .valueOf(SoulissBindingConstants.T31_FANLOW_MESSAGE_CHANNEL));
+                                            sMessage = SoulissBindingConstants.T31_FANLOW_MESSAGE_FAN_CHANNEL;
                                             break;
                                         case 2:
-                                            ((SoulissT31Handler) handler).setState(StringType
-                                                    .valueOf(SoulissBindingConstants.T31_FANMEDIUM_MESSAGE_CHANNEL));
+                                            sMessage = SoulissBindingConstants.T31_FANMEDIUM_MESSAGE_FAN_CHANNEL;
                                             break;
                                         case 3:
-                                            ((SoulissT31Handler) handler).setState(StringType
-                                                    .valueOf(SoulissBindingConstants.T31_FANHIGH_MESSAGE_CHANNEL));
-
+                                            sMessage = SoulissBindingConstants.T31_FANHIGH_MESSAGE_FAN_CHANNEL;
                                             break;
                                     }
+
+                                    ((SoulissT31Handler) handler).setState(StringType.valueOf(sMessage));
 
                                     // SLOT 1-2: Temperature Value
                                     float val = getFloatAtSlot(mac, slot + 1);
@@ -609,16 +604,32 @@ public class SoulissBindingUDPDecoder {
                                         case SoulissBindingProtocolConstants.Souliss_T4n_NoAntitheft:
                                             ((SoulissT41Handler) handler).setState(OnOffType.OFF);
                                             ((SoulissT41Handler) handler).setState(StringType
-                                                    .valueOf(SoulissBindingConstants.T41_ALARMOFF_MESSAGE_CHANNEL));
+                                                    .valueOf(SoulissBindingConstants.T4n_ALARMOFF_MESSAGE_CHANNEL));
                                             break;
                                         case SoulissBindingProtocolConstants.Souliss_T4n_Antitheft:
                                             ((SoulissT41Handler) handler).setState(OnOffType.ON);
                                             ((SoulissT41Handler) handler).setState(StringType
-                                                    .valueOf(SoulissBindingConstants.T41_ALARMOFF_MESSAGE_CHANNEL));
+                                                    .valueOf(SoulissBindingConstants.T4n_ALARMOFF_MESSAGE_CHANNEL));
                                             break;
                                         case SoulissBindingProtocolConstants.Souliss_T4n_InAlarm:
                                             ((SoulissT41Handler) handler).setState(StringType
-                                                    .valueOf(SoulissBindingConstants.T41_ALARMON_MESSAGE_CHANNEL));
+                                                    .valueOf(SoulissBindingConstants.T4n_ALARMON_MESSAGE_CHANNEL));
+                                            break;
+                                        case SoulissBindingProtocolConstants.Souliss_T4n_Armed:
+                                            ((SoulissT41Handler) handler).setState(
+                                                    StringType.valueOf(SoulissBindingConstants.T4n_ONOFFALARM_CHANNEL));
+                                            break;
+                                    }
+                                    break;
+                                case SoulissBindingConstants.T42:
+                                    switch (sVal) {
+                                        case SoulissBindingProtocolConstants.Souliss_T4n_NoAntitheft:
+                                            ((SoulissT42Handler) handler).setState(StringType
+                                                    .valueOf(SoulissBindingConstants.T4n_ALARMOFF_MESSAGE_CHANNEL));
+                                            break;
+                                        case SoulissBindingProtocolConstants.Souliss_T4n_Alarm:
+                                            ((SoulissT42Handler) handler).setState(StringType
+                                                    .valueOf(SoulissBindingConstants.T4n_ALARMON_MESSAGE_CHANNEL));
                                             break;
                                     }
                                     break;
