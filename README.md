@@ -48,6 +48,7 @@ Typicals match directly with openHAB Thing type.
 |Motorized devices with limit switches and middle position|T22|souliss:t22|
 |Temperature control|T31|souliss:t31|
 |Anti-theft integration (Main)|T41|souliss:t41|
+|Anti-theft integration (Peer)|T42|souliss:t42|
 |Analog input, half-precision floating point|T51|souliss:t51|
 |Temperature measure (-20, +50) °C|T52|souliss:t52|
 |Humidity measure (0, 100) %|T53|souliss:t53|
@@ -69,7 +70,7 @@ Typicals match directly with openHAB Thing type.
 ### Channels
 The following matrix lists the capabilities (channels) for each type:
 
-|Thing type |Switch onoff | Switch sleep | DateTime lastStatusStored | Number healty |Switch automode|Contact stateOnOff|Contact stateOpenClose|Switch pulse|Switch whitemode|Rollershutter roller_brightness|Dimmer dimmer_brightness|Color ledcolor|Switch one|Switch two|Switch three|Switch four|Switch five|Switch six|Switch seven|Switch eight|
+|Thing type / Channel |Switch / onoff | Switch / sleep | DateTime / lastStatusStored | Number / healty |Switch / automode|Contact / stateOnOff|Contact / stateOpenClose|Switch / pulse|Switch / whitemode|Rollershutter / roller_brightness|Dimmer / dimmer_brightness|Color / ledcolor|Switch / one|Switch / two|Switch / three|Switch / four|Switch / five|Switch / six|Switch / seven|Switch / eight|
 |-- |-- | -- | -- | -- |--|--|--|--|--|--|--|--|--|--|--|--|--|--|--|--|
 |souliss:t11|x|x|x|x||||
 |souliss:t12|x| |x|x|x||||
@@ -80,12 +81,13 @@ The following matrix lists the capabilities (channels) for each type:
 |souliss:t19|x|x|x|x||||||x|x|
 |souliss:t1A|||x|x|||||||||x|x|x|x|x|x|x|x|
 
-|Thing type | DateTime lastStatusStored | Number healty |Rollershutter rollershutter|(see down) rollershutter_state|(see down) mode|(see down) fan|Switch status|Number setpoint|Switch setAsMeasured|Switch measured|Switch statusAlarm|Switch onOffAlarm|Switch rearmAlarm|
+|Thing type / Channel | DateTime / lastStatusStored | Number / healty |Rollershutter / rollershutter|(see down) / rollershutter_state|(see down) / mode|(see down) / fan|Switch / status|Number / setpoint|Switch / setAsMeasured|Switch / measured|Switch / statusAlarm|Switch / onOffAlarm|Switch / rearmAlarm|
 |-- |-- | --|- | -- | -- |--|--|--|--|--|--|--|--|
 |souliss:t21|x|x||x|
 |souliss:t22|x|x|x|x|
 |souliss:t31|x|x|||x|x|x|x|x|x|
 |souliss:t41|x|x|||||||||x|x|x|
+|souliss:t42|x|x|||||||||x||x|
 
 rollershutter_state = opening, closing, limSwitch_open , limSwitch_close, state_open, state_close, NoLimSwitch
 
@@ -94,7 +96,7 @@ mode = COOLING_MODE, HEATING_MODE, POWEREDOFF_MODE
 fan = AUTO, HIGH, MEDIUM, LOW, FANOFF
 
 
-|Thing type | DateTime lastStatusStored |Number healty|Number value|
+|Thing type / Channel| DateTime / lastStatusStored |Number / healty|Number / value|
 |-- |-- | -- | --|
 |souliss:t51|x|x|x|
 |souliss:t52|x|x|x|
@@ -105,7 +107,7 @@ fan = AUTO, HIGH, MEDIUM, LOW, FANOFF
 |souliss:t57|x|x|x|
 |souliss:t58|x|x|x|
 
-|Thing type |  DateTime lastStatusStored |Number healty|Number value|
+|Thing type / Channel|  DateTime / lastStatusStored |Number / healty|Number / value|
 |-- |-- | -- | --|
 |souliss:t61|x|x|x|
 |souliss:t62|x|x|x|
@@ -118,7 +120,7 @@ fan = AUTO, HIGH, MEDIUM, LOW, FANOFF
 |souliss:topic|x||x|
 
 ### Parameters
-|Thing type | Parameters Name and Default Value| Description|
+|Thing type| Parameters Name and Default Value| Description|
 |-- |-- |-- |
 |Gateway|GATEWAY_IP_ADDRESS="" |Will be resolved by discovery if auto configured|
 |"|GATEWAY_PORT_NUMBER=230 ||
@@ -138,7 +140,7 @@ fan = AUTO, HIGH, MEDIUM, LOW, FANOFF
 |T21|||
 |T22|||
 |T31|||
-|T41|||
+|T4x|||
 |T5x|||
 |T6x|||
 
@@ -246,10 +248,14 @@ String divano_healty	"Salute"	<keyring> (FamilyRoom, Divano, Diagnostic)  {chann
 Number termostatosoggiorno_temperatura  "Temperatura [%.1f °C]" <temperature> (TermostatoSoggiorno) {channel="souliss:t31:105:6-0:measured"}
 Number termostatosoggiorno_umidita "Umidità [%.1f %%]" <temperature>   (TermostatoSoggiorno)       {channel="souliss:t53:105:6-7:value" }
 
-Number termostatosoggiorno_setpoint "Setpoint [%.1f °C]"    <temperature> (TermostatoSoggiorno) {channel="souliss:t31:105:6-0:setpoint"}
-Switch termostatosoggiorno_setasmeasured "Set temp. attuale" <temperature> (TermostatoSoggiorno) {autoupdate="false", channel="souliss:t31:105:6-0:setAsMeasured"}
-String termostatosoggiorno_modo "Modo" (TermostatoSoggiorno) {channel="souliss:t31:105:6-0:mode"}
-Switch termostatosoggiorno_stato "Status" <light> (TermostatoSoggiorno) {channel="souliss:t31:105:6-0:status"}
+Number termostatosoggiorno_umidita "Umidità" <humidity>   (TermostatoSoggiorno)  {channel="souliss:t53:105:6-7:value" }
+
+Number termostatosoggiorno_temperatura  "Temperatura" <temperature> (TermostatoSoggiorno) {channel="souliss:t31:105:6-0:measured"}
+Number termostatosoggiorno_setpoint "Regola Set Point [%.1f °c]"    <heating> (TermostatoSoggiorno) {autoupdate="false", channel="souliss:t31:105:6-0:setpoint"}
+Switch termostatosoggiorno_setasmeasured "Set temp. attuale" <heating> (TermostatoSoggiorno)  {channel="souliss:t31:105:6-0:setAsMeasured"}
+String termostatosoggiorno_modo "Modo" (TermostatoSoggiorno) {autoupdate="false", channel="souliss:t31:105:6-0:mode"}
+Switch termostatosoggiorno_power "Termostato" <powerIcon> (TermostatoSoggiorno) {channel="souliss:t31:105:6-0:system"}
+Switch termostatosoggiorno_fire "Fire" <fire> (TermostatoSoggiorno) {channel="souliss:t31:105:6-0:fire"}
 
 Dimmer  TermostatoSoggiorno_displayBright   "Lumin.min. display" (TermostatoSoggiorno)      {channel="souliss:t19:105:6-9" }
 String TermostatoSoggiorno_aggiornamento "Agg.[%1$td.%1$tm.%1$tY %1$tk:%1$tM:%1$tS]" <keyring> (TermostatoSoggiorno, Diagnostic)  {channel="souliss:t31:105:6-0:lastStatusStored"}
@@ -284,10 +290,10 @@ Frame {
 
 Frame label="Temperature"{	
 
-       Text label="Temperatura e umidità" icon="temperature" {
-       Default item=FamilyRoom_Temperature label="Temperatura"
-       Default item=FamilyRoom_Humidity label="Umidità"
-       Default item=AggiornamentoNodo6 icon="icon16x16"
+            Text label="Temperatura e umidità" icon="temperature" {
+            Default item=FamilyRoom_Temperature label="Temperatura"
+            Default item=FamilyRoom_Humidity label="Umidità"
+            Default item=AggiornamentoNodo6 icon="icon16x16"
         
 }
 
@@ -296,13 +302,16 @@ Text label="Termostato soggiorno" icon="temperature" {
             Default item=termostatosoggiorno_temperatura
             Default item=termostatosoggiorno_umidita
             Switch item=termostatosoggiorno_setasmeasured mappings=[ON="Set"]
-            Switch item=termostatosoggiorno_modo label="Power On" mappings=[HEATING_MODE="Set"] icon="powerIcon"
-            Switch item=termostatosoggiorno_modo label="Power Off" mappings=[POWEREDOFF_MODE="Set"] icon="powerIcon"
-            Text item=termostatosoggiorno_stato label="Stato" icon="coolingMode"
-	    Text item=termostatosoggiorno_aggiornato label="Aggiornato: [%1$td.%1$tm.%1$tY %1$tk:%1$tM:%1$tS]" icon="icon16x16"
-            Slider item=displayBright_TermostatoSoggiorno
-  }	
- }
+            Switch item=termostatosoggiorno_modo label="Heating Mode" mappings=[HEATING_MODE="Set"] 
+            Switch item=termostatosoggiorno_power label="Power On/Off"
+            Default item=termostatosoggiorno_fire label="Fire"
+	        Text item=termostatoSoggiorno_aggiornamento label="Aggiornato: [%1$td.%1$tm.%1$tY %1$tk:%1$tM:%1$tS]" icon="icon16x16"
+            Default item=termostatoSoggiorno_healty
+	        Slider item=termostatoSoggiorno_displayBright
+	}		
+}
+
+
 }
 ```
 
