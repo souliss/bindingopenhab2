@@ -278,20 +278,20 @@ Frame {
         Group item=Elettricita label="Elettricità" icon="energy"
 }
 
-   Frame {  
+Frame {  
        Group item=Divano icon="light"
-   }
+}
 
-   Frame label="Temperature"{	
+Frame label="Temperature"{	
 
-            Text label="Temperatura e umidità" icon="temperature" {
-            Default item=FamilyRoom_Temperature label="Temperatura"
-            Default item=FamilyRoom_Humidity label="Umidità"
-            Default item=AggiornamentoNodo6 icon="icon16x16"
+       Text label="Temperatura e umidità" icon="temperature" {
+       Default item=FamilyRoom_Temperature label="Temperatura"
+       Default item=FamilyRoom_Humidity label="Umidità"
+       Default item=AggiornamentoNodo6 icon="icon16x16"
         
 }
 
-			Text label="Termostato soggiorno" icon="temperature" {
+Text label="Termostato soggiorno" icon="temperature" {
             Setpoint item=termostatosoggiorno_setpoint step=0.5 minValue=10 maxValue=30
             Default item=termostatosoggiorno_temperatura
             Default item=termostatosoggiorno_umidita
@@ -299,12 +299,10 @@ Frame {
             Switch item=termostatosoggiorno_modo label="Power On" mappings=[HEATING_MODE="Set"] icon="powerIcon"
             Switch item=termostatosoggiorno_modo label="Power Off" mappings=[POWEREDOFF_MODE="Set"] icon="powerIcon"
             Text item=termostatosoggiorno_stato label="Stato" icon="coolingMode"
-			Text item=termostatosoggiorno_aggiornato label="Aggiornato: [%1$td.%1$tm.%1$tY %1$tk:%1$tM:%1$tS]" icon="icon16x16"
+	    Text item=termostatosoggiorno_aggiornato label="Aggiornato: [%1$td.%1$tm.%1$tY %1$tk:%1$tM:%1$tS]" icon="icon16x16"
             Slider item=displayBright_TermostatoSoggiorno
-		}	
-}
-
-
+  }	
+ }
 }
 ```
 
