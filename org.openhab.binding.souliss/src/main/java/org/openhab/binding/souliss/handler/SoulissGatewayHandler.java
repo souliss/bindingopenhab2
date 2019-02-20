@@ -1,9 +1,14 @@
 /**
- * Copyright (c) 2014-2019 by the respective copyright holders.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2010-2019 Contributors to the openHAB project
+ *
+ * See the NOTICE file(s) distributed with this work for additional
+ * information.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
  */
 package org.openhab.binding.souliss.handler;
 
@@ -71,8 +76,6 @@ public class SoulissGatewayHandler extends BaseBridgeHandler {
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -116,7 +119,6 @@ public class SoulissGatewayHandler extends BaseBridgeHandler {
                         SoulissBindingUDPConstants.SOULISS_DEFAULT_USER_INDEX);
                 logger.debug("Set User Index to {}", SoulissBindingUDPConstants.SOULISS_DEFAULT_USER_INDEX);
             }
-
         }
 
         if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_NODE_INDEX) != null) {
@@ -158,23 +160,23 @@ public class SoulissGatewayHandler extends BaseBridgeHandler {
                 UDP_Server_DefaultPort_RunnableClass = new SoulissBindingUDPServerJob(datagramSocket_defaultPort,
                         SoulissBindingNetworkParameters.discoverResult);
                 UDPserverJob_DefaultPort = scheduler.scheduleAtFixedRate(UDP_Server_DefaultPort_RunnableClass, 100,
-                        SoulissBindingConstants.SERVER_cicleInMillis, TimeUnit.MILLISECONDS);
+                        SoulissBindingConstants.SERVER_CIRLE_IN_MILLIS, TimeUnit.MILLISECONDS);
             }
         }
 
         // START JOB PING
 
-        SoulissGatewayJobPing SoulissGatewayJobPingRunnable = new SoulissGatewayJobPing(bridge);
-        scheduler.scheduleWithFixedDelay(SoulissGatewayJobPingRunnable, 2,
-                SoulissGatewayJobPingRunnable.get_pingRefreshInterval(), TimeUnit.SECONDS);
+        SoulissGatewayJobPing soulissGatewayJobPingRunnable = new SoulissGatewayJobPing(bridge);
+        scheduler.scheduleAtFixedRate(soulissGatewayJobPingRunnable, 2,
+                soulissGatewayJobPingRunnable.get_pingRefreshInterval(), TimeUnit.SECONDS);
 
-        SoulissGatewayJobSubscription SoulissGatewayJobSubscriptionRunnable = new SoulissGatewayJobSubscription(bridge);
-        scheduler.scheduleWithFixedDelay(SoulissGatewayJobSubscriptionRunnable, 0,
-                SoulissGatewayJobSubscriptionRunnable.get_subscriptionRefreshInterval(), TimeUnit.MINUTES);
+        SoulissGatewayJobSubscription soulissGatewayJobSubscriptionRunnable = new SoulissGatewayJobSubscription(bridge);
+        scheduler.scheduleAtFixedRate(soulissGatewayJobSubscriptionRunnable, 0,
+                soulissGatewayJobSubscriptionRunnable.get_subscriptionRefreshInterval(), TimeUnit.MINUTES);
 
-        SoulissGatewayJobHealty SoulissGatewayJobHealtyRunnable = new SoulissGatewayJobHealty(bridge);
-        scheduler.scheduleWithFixedDelay(SoulissGatewayJobHealtyRunnable, 5,
-                SoulissGatewayJobHealtyRunnable.get_healthRefreshInterval(), TimeUnit.SECONDS);
+        SoulissGatewayJobHealty soulissGatewayJobHealtyRunnable = new SoulissGatewayJobHealty(bridge);
+        scheduler.scheduleAtFixedRate(soulissGatewayJobHealtyRunnable, 5,
+                soulissGatewayJobHealtyRunnable.get_healthRefreshInterval(), TimeUnit.SECONDS);
     }
 
     @Override
@@ -263,9 +265,7 @@ public class SoulissGatewayHandler extends BaseBridgeHandler {
         } catch (Exception e) {
             logger.debug("Illegal status transition to ONLINE");
         }
-
         countPING_KO = 0; // reset counter
-
     }
 
     @SuppressWarnings("null")
@@ -278,7 +278,6 @@ public class SoulissGatewayHandler extends BaseBridgeHandler {
                         + bridge.getHandler().getThing().getUID() + " do not respond to " + countPING_KO + " ping");
             }
         }
-
     }
 
     public void sendSubscription() {
@@ -288,7 +287,6 @@ public class SoulissGatewayHandler extends BaseBridgeHandler {
                     IPAddressOnLAN, nodeIndex, userIndex, getNodes());
         }
         logger.debug("Sent subscription packet");
-
     }
 
     public void setThereIsAThingDetection() {
@@ -298,5 +296,4 @@ public class SoulissGatewayHandler extends BaseBridgeHandler {
     public void resetThereIsAThingDetection() {
         thereIsAThingDetection = false;
     }
-
 }

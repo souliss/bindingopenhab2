@@ -1,9 +1,14 @@
 /**
- * Copyright (c) 2014-2019 by the respective copyright holders.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2010-2019 Contributors to the openHAB project
+ *
+ * See the NOTICE file(s) distributed with this work for additional
+ * information.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
  */
 package org.openhab.binding.souliss.handler;
 
@@ -34,12 +39,10 @@ public class SoulissT1AHandler extends SoulissGenericTypical implements typicalC
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
-
     }
 
     @Override
     public void initialize() {
-
         updateStatus(ThingStatus.ONLINE);
     }
 
@@ -60,20 +63,16 @@ public class SoulissT1AHandler extends SoulissGenericTypical implements typicalC
     }
 
     private OnOffType getTypeFromBool(boolean value) {
-
         if (value == false) {
             return OnOffType.OFF;
-        } else {
-            return OnOffType.ON;
         }
+        return OnOffType.ON;
     }
 
     private boolean getBitState(int value, int bit) {
-
         if ((value & (1L << bit)) == 0) {
             return false;
-        } else {
-            return true;
         }
+        return true;
     }
 }

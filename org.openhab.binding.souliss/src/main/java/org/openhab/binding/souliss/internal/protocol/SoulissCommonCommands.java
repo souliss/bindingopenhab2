@@ -1,10 +1,14 @@
 /**
- * Copyright (c) 2010-2018 by the respective copyright holders.
+ * Copyright (c) 2010-2019 Contributors to the openHAB project
  *
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * See the NOTICE file(s) distributed with this work for additional
+ * information.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
  */
 package org.openhab.binding.souliss.internal.protocol;
 
@@ -188,7 +192,6 @@ public class SoulissCommonCommands {
      */
     private static void send(DatagramSocket socket, ArrayList<Byte> MACACOframe, String sSoulissNodeIPAddressOnLAN,
             short nodeIndex, short userIndex) {
-
         ArrayList<Byte> buf = buildVNetFrame(MACACOframe, sSoulissNodeIPAddressOnLAN, userIndex, nodeIndex);
         byte[] merd = toByteArray(buf);
 
@@ -200,7 +203,7 @@ public class SoulissCommonCommands {
             // SoulissBindingSendDispatcher.put(socket, packet);
             socket.send(packet);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error: ", e);
             logger.error(e.getMessage());
         }
 
@@ -210,7 +213,6 @@ public class SoulissCommonCommands {
      * send UDP frame
      */
     private static void sendBroadcastNow(DatagramSocket socket, ArrayList<Byte> MACACOframe) {
-
         short iUserIndex = SoulissBindingNetworkParameters.defaultUserIndex;
         short iNodeIndex = SoulissBindingNetworkParameters.defaultNodeIndex;
 
@@ -233,7 +235,6 @@ public class SoulissCommonCommands {
                         // Send the broadcast package!
                         if (bc != null) {
                             try {
-
                                 ArrayList<Byte> buf = buildVNetFrame(MACACOframe, "255.255.255.255", iUserIndex,
                                         iNodeIndex);
                                 byte[] merd = toByteArray(buf);
@@ -252,12 +253,10 @@ public class SoulissCommonCommands {
                     }
                 }
             }
-        } catch (SocketException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        } catch (UnknownHostException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+        } catch (SocketException e) {
+            logger.error(e.getMessage());
+        } catch (UnknownHostException e) {
+            logger.error(e.getMessage());
         }
     }
 
@@ -271,7 +270,7 @@ public class SoulissCommonCommands {
         try {
             ip = InetAddress.getByName(soulissNodeIPAddress);
         } catch (UnknownHostException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
             return frame;
         }
         byte[] dude = ip.getAddress();

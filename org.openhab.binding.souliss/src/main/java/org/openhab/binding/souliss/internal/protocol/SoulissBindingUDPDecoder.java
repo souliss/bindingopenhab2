@@ -1,10 +1,14 @@
 /**
- * Copyright (c) 2010-2018 by the respective copyright holders.
+ * Copyright (c) 2010-2019 Contributors to the openHAB project
  *
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * See the NOTICE file(s) distributed with this work for additional
+ * information.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
  */
 package org.openhab.binding.souliss.internal.protocol;
 
@@ -110,7 +114,7 @@ public class SoulissBindingUDPDecoder {
                     decodePingBroadcast(macacoPck);
                 } catch (UnknownHostException e) {
                     logger.debug("Error: {}", e.getLocalizedMessage());
-                    e.printStackTrace();
+                    logger.error("Error:", e);
                 }
                 break;
 
@@ -607,20 +611,20 @@ public class SoulissBindingUDPDecoder {
                                         case SoulissBindingProtocolConstants.Souliss_T4n_NoAntitheft:
                                             ((SoulissT41Handler) handler).setState(OnOffType.OFF);
                                             ((SoulissT41Handler) handler).setState(StringType
-                                                    .valueOf(SoulissBindingConstants.T4n_ALARMOFF_MESSAGE_CHANNEL));
+                                                    .valueOf(SoulissBindingConstants.T4N_ALARMOFF_MESSAGE_CHANNEL));
                                             break;
                                         case SoulissBindingProtocolConstants.Souliss_T4n_Antitheft:
                                             ((SoulissT41Handler) handler).setState(OnOffType.ON);
                                             ((SoulissT41Handler) handler).setState(StringType
-                                                    .valueOf(SoulissBindingConstants.T4n_ALARMOFF_MESSAGE_CHANNEL));
+                                                    .valueOf(SoulissBindingConstants.T4N_ALARMOFF_MESSAGE_CHANNEL));
                                             break;
                                         case SoulissBindingProtocolConstants.Souliss_T4n_InAlarm:
                                             ((SoulissT41Handler) handler).setState(StringType
-                                                    .valueOf(SoulissBindingConstants.T4n_ALARMON_MESSAGE_CHANNEL));
+                                                    .valueOf(SoulissBindingConstants.T4N_ALARMON_MESSAGE_CHANNEL));
                                             break;
                                         case SoulissBindingProtocolConstants.Souliss_T4n_Armed:
                                             ((SoulissT41Handler) handler).setState(
-                                                    StringType.valueOf(SoulissBindingConstants.T4n_ONOFFALARM_CHANNEL));
+                                                    StringType.valueOf(SoulissBindingConstants.T4N_ONOFFALARM_CHANNEL));
                                             break;
                                     }
                                     break;
@@ -628,11 +632,11 @@ public class SoulissBindingUDPDecoder {
                                     switch (sVal) {
                                         case SoulissBindingProtocolConstants.Souliss_T4n_NoAntitheft:
                                             ((SoulissT42Handler) handler).setState(StringType
-                                                    .valueOf(SoulissBindingConstants.T4n_ALARMOFF_MESSAGE_CHANNEL));
+                                                    .valueOf(SoulissBindingConstants.T4N_ALARMOFF_MESSAGE_CHANNEL));
                                             break;
                                         case SoulissBindingProtocolConstants.Souliss_T4n_Alarm:
                                             ((SoulissT42Handler) handler).setState(StringType
-                                                    .valueOf(SoulissBindingConstants.T4n_ALARMON_MESSAGE_CHANNEL));
+                                                    .valueOf(SoulissBindingConstants.T4N_ALARMON_MESSAGE_CHANNEL));
                                             break;
                                     }
                                     break;

@@ -10,9 +10,9 @@
 
 -->
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="org.openhab.binding.souliss.internal.discovery.SoulissGatewayDiscovery">
- <implementation class="org.openhab.binding.souliss.internal.discovery.SoulissGatewayDiscovery"/>
- <service>
-    <provide interface="org.eclipse.smarthome.config.discovery.DiscoveryService"/>
+	<implementation class="org.openhab.binding.souliss.internal.discovery.SoulissGatewayDiscovery"/>
+	<service>
+		<provide interface="org.eclipse.smarthome.config.discovery.DiscoveryService"/>
   
- </service>
+	</service>
 </scr:component>

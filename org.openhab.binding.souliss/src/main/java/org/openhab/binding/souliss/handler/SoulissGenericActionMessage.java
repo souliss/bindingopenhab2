@@ -1,10 +1,14 @@
 /**
- * Copyright (c) 2010-2018 by the respective copyright holders.
+ * Copyright (c) 2010-2019 Contributors to the openHAB project
  *
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * See the NOTICE file(s) distributed with this work for additional
+ * information.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
  */
 package org.openhab.binding.souliss.handler;
 
@@ -63,7 +67,6 @@ public abstract class SoulissGenericActionMessage extends BaseThingHandler {
                     .split(SoulissBindingConstants.UUID_NODE_SLOT_SEPARATOR)[0];
             sTopicVariant = _thing.getUID().toString().split(":")[2]
                     .split(SoulissBindingConstants.UUID_NODE_SLOT_SEPARATOR)[1];
-
         } catch (Exception e) {
             logger.debug("Item Definition Error. Use ex:'souliss:t11:nodeNumber-slotNumber'");
         }
@@ -93,7 +96,6 @@ public abstract class SoulissGenericActionMessage extends BaseThingHandler {
 
     public void setUpdateTimeNow() {
         timestamp = getTimestamp();
-
     }
 
     /**

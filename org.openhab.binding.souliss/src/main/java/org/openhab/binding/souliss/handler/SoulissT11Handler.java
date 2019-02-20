@@ -1,9 +1,14 @@
 /**
- * Copyright (c) 2014-2019 by the respective copyright holders.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2010-2019 Contributors to the openHAB project
+ *
+ * See the NOTICE file(s) distributed with this work for additional
+ * information.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
  */
 package org.openhab.binding.souliss.handler;
 
@@ -39,7 +44,6 @@ public class SoulissT11Handler extends SoulissGenericTypical implements typicalC
     public SoulissT11Handler(Thing _thing) {
         super(_thing);
         thing = _thing;
-
     }
 
     // called on every status change or change request
@@ -80,7 +84,6 @@ public class SoulissT11Handler extends SoulissGenericTypical implements typicalC
 
     @Override
     public void initialize() {
-        // TODO: Initialize the thing. If done set status to ONLINE to indicate proper working.
         // Long running initialization should be done asynchronously in background.
         updateStatus(ThingStatus.ONLINE);
 
@@ -100,10 +103,8 @@ public class SoulissT11Handler extends SoulissGenericTypical implements typicalC
     @Override
     public void setState(PrimitiveType _state) {
         super.setLastStatusStored();
-
         if (_state != null) {
             updateState(SoulissBindingConstants.SLEEP_CHANNEL, OnOffType.OFF);
-
             if (((OnOffType) _state) != this.T1nState) {
                 this.updateState(SoulissBindingConstants.ONOFF_CHANNEL, (OnOffType) _state);
                 // this.updateThing(this.thing);
