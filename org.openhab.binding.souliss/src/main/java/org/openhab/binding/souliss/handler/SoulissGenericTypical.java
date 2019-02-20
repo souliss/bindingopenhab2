@@ -153,29 +153,36 @@ public abstract class SoulissGenericTypical extends BaseThingHandler {
         }
     }
 
+    @SuppressWarnings("null")
     public String getGatewayIP() {
         // return ((SoulissGatewayHandler) thingRegistry.get(thing.getBridgeUID()).getHandler()).IPAddressOnLAN;
         Bridge bridge = getBridge();
         if (bridge != null) {
-            return ((SoulissGatewayHandler) getBridge().getHandler()).IPAddressOnLAN;
-        } else {
-            return null;
+            if (bridge.getHandler() != null) {
+                return ((SoulissGatewayHandler) bridge.getHandler()).IPAddressOnLAN;
+            }
         }
+        return null;
     }
 
+    @SuppressWarnings("null")
     public short getGatewayUserIndex() {
-        // return ((SoulissGatewayHandler) thingRegistry.get(thing.getBridgeUID()).getHandler()).userIndex;
-        return ((SoulissGatewayHandler) getBridge().getHandler()).userIndex;
+        if (getBridge() != null) {
+            return ((SoulissGatewayHandler) getBridge().getHandler()).userIndex;
+        }
+        return 0;
     }
 
+    @SuppressWarnings("null")
     public short getGatewayNodeIndex() {
-        // return ((SoulissGatewayHandler) thingRegistry.get(thing.getBridgeUID()).getHandler()).nodeIndex;
-        return ((SoulissGatewayHandler) getBridge().getHandler()).nodeIndex;
+        if (getBridge() != null) {
+            return ((SoulissGatewayHandler) getBridge().getHandler()).nodeIndex;
+        }
+        return 0;
     }
 
     public DatagramSocket getDatagramSocket() {
         return SoulissBindingNetworkParameters.getDatagramSocket();
-        // return ((SoulissGatewayHandler) getBridge().getHandler()).datagramSocket;
     }
 
     public void setHealty(short _shHealty) {

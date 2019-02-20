@@ -197,8 +197,12 @@ public class SoulissGatewayHandler extends BaseBridgeHandler {
                 IPAddressOnLAN, nodeIndex, userIndex, nodes);
     }
 
+    @SuppressWarnings({ "deprecation", "null" })
     public String getGatewayIP() {
-        return ((SoulissGatewayHandler) thingRegistry.get(thing.getBridgeUID()).getHandler()).IPAddressOnLAN;
+        if (thing.getBridgeUID() != null) {
+            return ((SoulissGatewayHandler) thingRegistry.get(thing.getBridgeUID()).getHandler()).IPAddressOnLAN;
+        }
+        return null;
     }
 
     public void setNodes(int nodes) {
@@ -264,6 +268,7 @@ public class SoulissGatewayHandler extends BaseBridgeHandler {
 
     }
 
+    @SuppressWarnings("null")
     public void pingSent() {
         if (++countPING_KO > 3) {
             // if GW do not respond to ping it is setted to OFFLINE

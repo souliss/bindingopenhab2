@@ -207,21 +207,23 @@ public class SoulissBindingUDPDecoder {
 
             SoulissGatewayHandler gateway = (SoulissGatewayHandler) SoulissBindingNetworkParameters
                     .getGateway(lastByteGatewayIP).getHandler();
-            int typXnodo = gateway.getMaxTypicalXnode();
+            if (gateway != null) {
+                int typXnodo = gateway.getMaxTypicalXnode();
 
-            // creates Souliss nodes
-            for (int j = 0; j < numberOf; j++) {
-                if (mac.get(5 + j) != 0) {// create only not-empty typicals
-                    if (!(mac.get(5 + j) == SoulissBindingProtocolConstants.Souliss_T_related)) {
-                        short typical = mac.get(5 + j);
-                        short slot = (short) (j % typXnodo);
-                        short node = (short) (j / typXnodo + tgtnode);
-                        if (discoverResult != null) {
-                            logger.debug("Thing Detected. IP (last byte): {}, Typical: 0x{}, Node: {}, Slot: {} ",
-                                    lastByteGatewayIP, Integer.toHexString(typical), node, slot);
-                            discoverResult.thingDetected_Typicals(lastByteGatewayIP, typical, node, slot);
-                        } else {
-                            logger.debug("decodeTypRequest aborted. 'discoverResult' is null");
+                // creates Souliss nodes
+                for (int j = 0; j < numberOf; j++) {
+                    if (mac.get(5 + j) != 0) {// create only not-empty typicals
+                        if (!(mac.get(5 + j) == SoulissBindingProtocolConstants.Souliss_T_related)) {
+                            short typical = mac.get(5 + j);
+                            short slot = (short) (j % typXnodo);
+                            short node = (short) (j / typXnodo + tgtnode);
+                            if (discoverResult != null) {
+                                logger.debug("Thing Detected. IP (last byte): {}, Typical: 0x{}, Node: {}, Slot: {} ",
+                                        lastByteGatewayIP, Integer.toHexString(typical), node, slot);
+                                discoverResult.thingDetected_Typicals(lastByteGatewayIP, typical, node, slot);
+                            } else {
+                                logger.debug("decodeTypRequest aborted. 'discoverResult' is null");
+                            }
                         }
                     }
                 }
@@ -275,7 +277,6 @@ public class SoulissBindingUDPDecoder {
                 logger.debug("Topic Value (Payload 2 bytes): " + fRet);
             }
 
-            Thing thing = null;
             try {
                 ConcurrentHashMap<String, Thing> gwMaps = SoulissBindingNetworkParameters.getHashTableTopics();
                 Collection<Thing> gwMapsCollection = gwMaps.values();
@@ -286,8 +287,10 @@ public class SoulissBindingUDPDecoder {
                     if (t.getUID().toString().split(":")[2]
                             .equals(sTopicNumber + SoulissBindingConstants.UUID_NODE_SLOT_SEPARATOR + sTopicVariant)) {
                         topicHandler = (SoulissTopicsHandler) (t.getHandler());
-                        topicHandler.setState(DecimalType.valueOf(Float.toString(fRet)));
-                        bIsPresent = true;
+                        if (topicHandler != null) {
+                            topicHandler.setState(DecimalType.valueOf(Float.toString(fRet)));
+                            bIsPresent = true;
+                        }
                     }
                 }
                 if (discoverResult != null && !bIsPresent) {
@@ -325,14 +328,15 @@ public class SoulissBindingUDPDecoder {
 
             SoulissGatewayHandler gateway = (SoulissGatewayHandler) SoulissBindingNetworkParameters
                     .getGateway(lastByteGatewayIP).getHandler();
-            gateway.setNodes(nodes);
-            gateway.setMaxnodes(maxnodes);
-            gateway.setMaxTypicalXnode(maxTypicalXnode);
-            gateway.setMaxrequests(maxrequests);
+            if (gateway != null) {
+                gateway.setNodes(nodes);
+                gateway.setMaxnodes(maxnodes);
+                gateway.setMaxTypicalXnode(maxTypicalXnode);
+                gateway.setMaxrequests(maxrequests);
 
-            // db Struct Answer from lastByteGatewayIP
-            gateway.dbStructAnswerReceived();
-
+                // db Struct Answer from lastByteGatewayIP
+                gateway.dbStructAnswerReceived();
+            }
         } catch (Exception e) {
             logger.error("decodeDBStructRequest: SoulissNetworkParameter update ERROR");
         }
@@ -404,12 +408,11 @@ public class SoulissBindingUDPDecoder {
                             && Short.parseShort(((SoulissGenericTypical) handler).getGatewayIP().toString()
                                     .split("\\.")[3]) == lastByteGatewayIP) {
 
-                        if (((SoulissGenericTypical) handler) != null
-                                && ((SoulissGenericTypical) handler).getNode() == tgtnode) { // execute it
-                                                                                             // only
-                                                                                             // if it is
-                                                                                             // node
-                                                                                             // to update
+                        if (((SoulissGenericTypical) handler).getNode() == tgtnode) { // execute it
+                                                                                      // only
+                                                                                      // if it is
+                                                                                      // node
+                                                                                      // to update
                             // ...now check slot
                             int slot = ((SoulissGenericTypical) handler).getSlot();
                             // get typical value
