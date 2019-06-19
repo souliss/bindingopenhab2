@@ -336,4 +336,4 @@ Officiale repository for contribution in souliss github area: [here](https://git
 
 ## Download 
 
-To download latest compiled binding go to releases tab: [here](https://github.com/fazioa/soulissBindingOH2/releases)
+To download latest compiled binding go to releases tab: [here](https://github.com/souliss/bindingopenhab2/releases)
