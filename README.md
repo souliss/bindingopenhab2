@@ -177,7 +177,7 @@ Thing <type_id> <thing_id>  [ <parameters> ]
 
 souliss.things:
 ```
-Bridge souliss:gateway:105 "Souliss Gateway - 105" [GATEWAY_IP_ADDRESS="192.168.1.105", GATEWAY_PORT_NUMBER=230, PREFERRED_LOCAL_PORT_NUMBER=0, PING_INTERVAL=30, SUBSCRIBTION_INTERVAL=2, HEALTHY_INTERVAL=38, USER_INDEX=72, NODE_INDEX=38]
+Bridge souliss:gateway:105 "Souliss Gateway - 105" [GATEWAY_IP_ADDRESS="192.168.1.105", GATEWAY_PORT_NUMBER=230, PREFERRED_LOCAL_PORT_NUMBER=0, PING_INTERVAL=30, SUBSCRIBTION_INTERVAL=2, HEALTHY_INTERVAL=38, USER_INDEX=72, NODE_INDEX=38,  TIMEOUT_TO_REQUEUE=5000, TIMEOUT_TO_REMOVE_PACKET=20000]
 {  
 Thing t14 1-6 "Portoncino"@"Rientro"
 Thing t14 1-7 "Cancello"@"Rientro"
@@ -200,7 +200,7 @@ Thing t19 6-9 "Termostato Soggiorno - Luminosità"@"Soggiorno"
 
 Thing t11 5-0 "Tettoia"@"Giardino"
 
-Thing t11 12-0 "Divano"@"Soggiorno" [sleep=10] 
+Thing t11 12-0 "Divano"@"Soggiorno" [sleep=10, secureSend=false] 
 
 Thing t16 8-0 "LYT1"
 
