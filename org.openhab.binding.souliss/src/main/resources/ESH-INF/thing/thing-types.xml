@@ -48,6 +48,28 @@
                 <advanced>true</advanced>
             </parameter>
 
+             <parameter name="SEND_INTERVAL" type="integer" min="5" max="5000">
+                <label>Send interval</label>
+                <description>Interval in milliseconds to get packet from binding queue and send it to Souliss. First packet is sent immediately. 
+                </description>
+                <default>1000</default>
+                <advanced>true</advanced>
+            </parameter>
+            
+              <parameter name="TIMEOUT_TO_REQUEUE" type="integer" min="0" max="10000">
+                <label>Interval in milliseconds to requeue packet in queue if not yet executed</label>
+                <description></description>
+                <required>true</required>
+                <default>5000</default>
+            </parameter>
+            
+             <parameter name="TIMEOUT_TO_REMOVE_PACKET" type="integer" min="0" max="60000">
+                <label>Interval in milliseconds to remove packet from queue if not yet executed </label>
+                <description></description>
+                <required>true</required>
+                <default>20000</default>
+            </parameter>
+
 			<parameter name="USER_INDEX" type="integer" required="true">
 				<label>User Index</label>
 				<description>Generally the default value work good. It must is different from other user interfaces (ex: SoulissApp)
@@ -82,10 +104,17 @@
 		<config-description>
 			<parameter name="sleep" type="integer" min="1" max="1000">
 				<label>Sleep</label>
-				<description>Set sleep timer in cycles</description>
+				<description>Set sleep timer in cycles (conf.parameter: "sleep")</description>
 				<required>false</required>
 				<default>5</default>
 			</parameter>
+			 <parameter name="secureSend" type="boolean">
+                <label>Secure Send (conf.parameter: "secureSend")</label>
+                <description></description>
+                <required>false</required>
+                <default>true</default>
+            </parameter>
+
 		</config-description>
 	</thing-type>
 
@@ -101,6 +130,20 @@
 			<channel id="lastStatusStored" typeId="lastStatusStored" />
 			<channel id="healty" typeId="healty" />
 		</channels>
+		<config-description>
+            <parameter name="sleep" type="integer" min="1" max="1000">
+                <label>Sleep</label>
+                <description>Set sleep timer in cycles</description>
+                <required>false</required>
+                <default>5</default>
+            </parameter>
+             <parameter name="secureSend" type="boolean">
+                <label>Secure Send</label>
+                <description></description>
+                <required>false</required>
+                <default>true</default>
+            </parameter>
+        </config-description>
 	</thing-type>
 
 	<thing-type id="t13">
@@ -156,6 +199,13 @@
                 <required>false</required>
                 <default>5</default>
             </parameter>
+           
+             <parameter name="secureSend" type="boolean">
+                <label>Secure Send</label>
+                <description></description>
+                <required>false</required>
+                <default>true</default>
+            </parameter>
         </config-description>
     </thing-type>
     
@@ -171,6 +221,21 @@
             <channel id="lastStatusStored" typeId="lastStatusStored" />
             <channel id="healty" typeId="healty" />
         </channels>
+        <config-description>
+            <parameter name="sleep" type="integer" min="1" max="1000">
+                <label>Sleep</label>
+                <description>Set sleep timer in cycles</description>
+                <required>false</required>
+                <default>5</default>
+            </parameter>
+           
+             <parameter name="secureSend" type="boolean">
+                <label>Secure Send</label>
+                <description></description>
+                <required>false</required>
+                <default>true</default>
+            </parameter>
+        </config-description>
     </thing-type>
     
     <thing-type id="t19">
@@ -206,33 +271,33 @@
         <description>Digital input pass through</description>
 
         <channels>
-            <channel id="one" typeId="buttonReadOnly">
+            <channel id="one" typeId="stateOpenClose">
                 <label>1</label>
             </channel>
-            <channel id="two" typeId="buttonReadOnly">
+            <channel id="two" typeId="stateOpenClose">
                 <label>2</label>
             </channel>
-            <channel id="three" typeId="buttonReadOnly">
+            <channel id="three" typeId="stateOpenClose">
                 <label>3</label>
             </channel>
-            <channel id="four" typeId="buttonReadOnly">
+            <channel id="four" typeId="stateOpenClose">
                 <label>4</label>
             </channel>
-            <channel id="five" typeId="buttonReadOnly">
+            <channel id="five" typeId="stateOpenClose">
                 <label>5</label>
             </channel>
-            <channel id="six" typeId="buttonReadOnly">
+            <channel id="six" typeId="stateOpenClose">
                 <label>6</label>
             </channel>
-            <channel id="seven" typeId="buttonReadOnly">
+            <channel id="seven" typeId="stateOpenClose">
                 <label>7</label>
             </channel>
-            <channel id="eight" typeId="buttonReadOnly">
+            <channel id="eight" typeId="stateOpenClose">
                 <label>8</label>
             </channel>
             <channel id="lastStatusStored" typeId="lastStatusStored" />
             <channel id="healty" typeId="healty" />
-        </channels>                     
+        </channels>   
     </thing-type>
 
  <thing-type id="t21">
@@ -242,11 +307,19 @@
         <label>T21</label>
         <description>Motorized devices with limit switches</description>
         <channels>
-            <channel id="onoff" typeId="onoff" />
+            <channel id="rollershutter" typeId="rollershutter" />
             <channel id="rollershutter_state" typeId="rollershutter_state" />
             <channel id="lastStatusStored" typeId="lastStatusStored" />
             <channel id="healty" typeId="healty" />
         </channels>
+        <config-description>
+             <parameter name="secureSend" type="boolean">
+                <label>Secure Send</label>
+                <description></description>
+                <required>false</required>
+                <default>true</default>
+            </parameter>
+        </config-description>
     </thing-type>
     
     <thing-type id="t22">
@@ -261,6 +334,14 @@
             <channel id="lastStatusStored" typeId="lastStatusStored" />
             <channel id="healty" typeId="healty" />
         </channels>
+          <config-description>
+             <parameter name="secureSend" type="boolean">
+                <label>Secure Send</label>
+                <description></description>
+                <required>false</required>
+                <default>true</default>
+            </parameter>
+        </config-description>
     </thing-type>
 
     <thing-type id="t31">
@@ -310,6 +391,14 @@
             <channel id="healty" typeId="healty" />
             
         </channels>
+                 <config-description>
+             <parameter name="secureSend" type="boolean">
+                <label>Secure Send</label>
+                <description></description>
+                <required>false</required>
+                <default>true</default>
+            </parameter>
+        </config-description>
     </thing-type>
     
    <thing-type id="t42">
@@ -331,6 +420,14 @@
             <channel id="lastStatusStored" typeId="lastStatusStored" />
             <channel id="healty" typeId="healty" />
         </channels>
+                 <config-description>
+             <parameter name="secureSend" type="boolean">
+                <label>Secure Send</label>
+                <description></description>
+                <required>false</required>
+                <default>true</default>
+            </parameter>
+        </config-description>
     </thing-type>
 
 
@@ -657,13 +754,13 @@
         <label>Rollershutter</label>
         <description>Rollershutter Up/Down</description>
      <category>Blinds</category>
-        <state readOnly="false" />
+        <state min="0" max="100" pattern="%d %%"/>
     </channel-type>
 
 <channel-type id="rollershutter_state">
         <item-type>String</item-type>
-        <label>Mode</label>
-        <description>Stato of rollershutter/windows</description>
+        <label>State</label>
+        <description>State of rollershutter/windows</description>
         <state readOnly="true" >
             <options>
                 <option value="opening">Opening</option>
@@ -671,10 +768,9 @@
                 <option value="closing">Closing</option>
                 <option value="limSwitch_open">Limit Switch Open</option>
                 <option value="limSwitch_close">Limit Switch Close</option>
-                <option value="state_open">State Open</option>
-                <option value="state_close">State Close</option>
+                <option value="state_open">Opened</option>
+                <option value="state_close">Closed</option>
                    <option value="NoLimSwitch">No Limit Switch</option>
-                
             </options>
         </state>
     </channel-type>

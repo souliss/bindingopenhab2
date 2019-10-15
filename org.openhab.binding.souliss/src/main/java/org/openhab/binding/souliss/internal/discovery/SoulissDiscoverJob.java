@@ -41,7 +41,7 @@ public class SoulissDiscoverJob implements Runnable {
 
         void gatewayDetected(InetAddress addr, String id);
 
-        void thingDetected_Typicals(short lastByteGatewayIP, short typical, short node, short slot);
+        void thingDetected_Typicals(byte lastByteGatewayIP, byte typical, byte node, byte slot);
 
         void thingDetected_ActionMessages(String sTopicNumber, String sTopicVariant);
 
@@ -75,7 +75,7 @@ public class SoulissDiscoverJob implements Runnable {
             logger.error("Sending a discovery packet failed. " + e.getLocalizedMessage());
         }
 
-        ConcurrentHashMap<Short, Thing> gwMaps = SoulissBindingNetworkParameters.getHashTableGateways();
+        ConcurrentHashMap<Byte, Thing> gwMaps = SoulissBindingNetworkParameters.getHashTableGateways();
         Collection<Thing> gwMapsCollection = gwMaps.values();
         for (Thing t : gwMapsCollection) {
             SoulissGatewayHandler gw = (SoulissGatewayHandler) t.getHandler();

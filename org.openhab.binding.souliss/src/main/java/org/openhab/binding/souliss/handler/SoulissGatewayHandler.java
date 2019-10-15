@@ -22,6 +22,7 @@ import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
+import org.eclipse.smarthome.core.thing.ThingRegistry;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
@@ -30,6 +31,7 @@ import org.openhab.binding.souliss.SoulissBindingConstants;
 import org.openhab.binding.souliss.SoulissBindingUDPConstants;
 import org.openhab.binding.souliss.internal.SoulissDatagramSocketFactory;
 import org.openhab.binding.souliss.internal.protocol.SoulissBindingNetworkParameters;
+import org.openhab.binding.souliss.internal.protocol.SoulissBindingSendDispatcherJob;
 import org.openhab.binding.souliss.internal.protocol.SoulissBindingUDPServerJob;
 import org.openhab.binding.souliss.internal.protocol.SoulissCommonCommands;
 import org.slf4j.Logger;
@@ -55,11 +57,14 @@ public class SoulissGatewayHandler extends BaseBridgeHandler {
     public int subscriptionRefreshInterval;
     public boolean thereIsAThingDetection = true;
     public int healthRefreshInterval;
+    public int sendRefreshInterval;
+    public int sendTimeoutToRequeue;
+    public int sendTimeoutToRemovePacket;
     private Bridge bridge;
     public int preferred_local_port;
     public int souliss_gateway_port;
-    public short userIndex;
-    public short nodeIndex;
+    public byte userIndex;
+    public byte nodeIndex;
     public String IPAddressOnLAN;
     private int nodes;
     private int maxTypicalXnode;
@@ -68,6 +73,8 @@ public class SoulissGatewayHandler extends BaseBridgeHandler {
     private int maxrequests = 0;
 
     private ScheduledFuture<?> UDPserverJob_DefaultPort;
+
+    ThingRegistry thingRegistry;
 
     public SoulissGatewayHandler(Bridge _bridge) {
         super(_bridge);
@@ -112,7 +119,7 @@ public class SoulissGatewayHandler extends BaseBridgeHandler {
         if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_USER_INDEX) != null)
 
         {
-            userIndex = ((BigDecimal) gwConfigurationMap.get(SoulissBindingConstants.CONFIG_USER_INDEX)).shortValue();
+            userIndex = ((BigDecimal) gwConfigurationMap.get(SoulissBindingConstants.CONFIG_USER_INDEX)).byteValue();
             logger.debug("Get User Index: {}", userIndex);
             if (userIndex < 0 && userIndex > 255) {
                 bridge.getConfiguration().put(SoulissBindingConstants.CONFIG_USER_INDEX,
@@ -122,7 +129,7 @@ public class SoulissGatewayHandler extends BaseBridgeHandler {
         }
 
         if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_NODE_INDEX) != null) {
-            nodeIndex = ((BigDecimal) gwConfigurationMap.get(SoulissBindingConstants.CONFIG_NODE_INDEX)).shortValue();
+            nodeIndex = ((BigDecimal) gwConfigurationMap.get(SoulissBindingConstants.CONFIG_NODE_INDEX)).byteValue();
             logger.debug("Get Node Index: {}", nodeIndex);
         }
         if (nodeIndex < 0 && nodeIndex > 255) {
@@ -132,7 +139,7 @@ public class SoulissGatewayHandler extends BaseBridgeHandler {
         }
 
         if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_NODE_INDEX) != null) {
-            nodeIndex = ((BigDecimal) gwConfigurationMap.get(SoulissBindingConstants.CONFIG_NODE_INDEX)).shortValue();
+            nodeIndex = ((BigDecimal) gwConfigurationMap.get(SoulissBindingConstants.CONFIG_NODE_INDEX)).byteValue();
             logger.debug("Get Node Index: {}", nodeIndex);
         }
 
@@ -152,6 +159,24 @@ public class SoulissGatewayHandler extends BaseBridgeHandler {
             logger.debug("Get health refresh interval: {}", healthRefreshInterval);
         }
 
+        if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_SEND_REFRESH) != null) {
+            sendRefreshInterval = ((BigDecimal) gwConfigurationMap.get(SoulissBindingConstants.CONFIG_SEND_REFRESH))
+                    .intValue();
+            logger.debug("Get send refresh interval: {}", sendRefreshInterval);
+        }
+
+        if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_TIMEOUT_TO_REQUEUE) != null) {
+            sendTimeoutToRequeue = ((BigDecimal) gwConfigurationMap
+                    .get(SoulissBindingConstants.CONFIG_TIMEOUT_TO_REQUEUE)).intValue();
+            logger.debug("Get send timeout to requeue: {}", sendTimeoutToRequeue);
+        }
+
+        if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_TIMEOUT_TO_REMOVE_PACKET) != null) {
+            sendTimeoutToRequeue = ((BigDecimal) gwConfigurationMap
+                    .get(SoulissBindingConstants.CONFIG_TIMEOUT_TO_REMOVE_PACKET)).intValue();
+            logger.debug("Get send timeout to requeue: {}", sendTimeoutToRequeue);
+        }
+
         // START SERVER ON DEFAULT PORT - Used for topics
         if (UDP_Server_DefaultPort_RunnableClass == null) {
             logger.debug("Starting UDP server on Souliss Default Port for Topics (Publish&Subcribe)");
@@ -159,24 +184,30 @@ public class SoulissGatewayHandler extends BaseBridgeHandler {
             if (datagramSocket_defaultPort != null) {
                 UDP_Server_DefaultPort_RunnableClass = new SoulissBindingUDPServerJob(datagramSocket_defaultPort,
                         SoulissBindingNetworkParameters.discoverResult);
-                UDPserverJob_DefaultPort = scheduler.scheduleAtFixedRate(UDP_Server_DefaultPort_RunnableClass, 100,
-                        SoulissBindingConstants.SERVER_CIRLE_IN_MILLIS, TimeUnit.MILLISECONDS);
+                UDPserverJob_DefaultPort = scheduler.scheduleWithFixedDelay(UDP_Server_DefaultPort_RunnableClass, 100,
+                        SoulissBindingConstants.SERVER_CICLE_IN_MILLIS, TimeUnit.MILLISECONDS);
             }
         }
 
         // START JOB PING
 
         SoulissGatewayJobPing soulissGatewayJobPingRunnable = new SoulissGatewayJobPing(bridge);
-        scheduler.scheduleAtFixedRate(soulissGatewayJobPingRunnable, 2,
+        scheduler.scheduleWithFixedDelay(soulissGatewayJobPingRunnable, 2,
                 soulissGatewayJobPingRunnable.get_pingRefreshInterval(), TimeUnit.SECONDS);
 
         SoulissGatewayJobSubscription soulissGatewayJobSubscriptionRunnable = new SoulissGatewayJobSubscription(bridge);
-        scheduler.scheduleAtFixedRate(soulissGatewayJobSubscriptionRunnable, 0,
+        scheduler.scheduleWithFixedDelay(soulissGatewayJobSubscriptionRunnable, 0,
                 soulissGatewayJobSubscriptionRunnable.get_subscriptionRefreshInterval(), TimeUnit.MINUTES);
 
         SoulissGatewayJobHealty soulissGatewayJobHealtyRunnable = new SoulissGatewayJobHealty(bridge);
-        scheduler.scheduleAtFixedRate(soulissGatewayJobHealtyRunnable, 5,
+        scheduler.scheduleWithFixedDelay(soulissGatewayJobHealtyRunnable, 5,
                 soulissGatewayJobHealtyRunnable.get_healthRefreshInterval(), TimeUnit.SECONDS);
+
+        // il ciclo Send è schedulato con la costante SoulissBindingConstants.SEND_DISPATCHER_MIN_DELAY_cicleInMillis
+        // internamente il ciclo viene rallentato al timer impostato da configurazione (PaperUI o File)
+        SoulissBindingSendDispatcherJob SoulissSendDispatcherRunnable = new SoulissBindingSendDispatcherJob(bridge);
+        scheduler.scheduleWithFixedDelay(SoulissSendDispatcherRunnable, 15,
+                SoulissBindingConstants.SEND_DISPATCHER_MIN_DELAY_cicleInMillis, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -189,8 +220,8 @@ public class SoulissGatewayHandler extends BaseBridgeHandler {
     @Override
     public void thingUpdated(Thing thing) {
         logger.debug("Thing Updated: {}", thing.getThingTypeUID());
-        SoulissBindingNetworkParameters
-                .removeGateway((short) (Short.parseShort(IPAddressOnLAN.split("\\.")[3]) & 0xFF));
+        SoulissBindingNetworkParameters.removeGateway((Byte.parseByte((IPAddressOnLAN.split("\\.")[3]))));
+        // .removeGateway((byte) (Byte.parseByte((IPAddressOnLAN.split("\\.")[3]) & (byte) 0xFF));
         this.thing = thing;
     }
 

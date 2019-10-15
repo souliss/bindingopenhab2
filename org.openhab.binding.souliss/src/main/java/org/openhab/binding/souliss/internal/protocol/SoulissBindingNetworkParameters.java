@@ -31,8 +31,8 @@ import org.slf4j.LoggerFactory;
  */
 public class SoulissBindingNetworkParameters {
 
-    public static short defaultNodeIndex = 130;
-    public static short defaultUserIndex = 70;
+    public static Byte defaultNodeIndex = (byte) 130;
+    public static Byte defaultUserIndex = (byte) 70;
     public static int presetTime = 1000;
     public static int SEND_DELAY = presetTime;
     public static int SEND_MIN_DELAY = presetTime;
@@ -40,7 +40,7 @@ public class SoulissBindingNetworkParameters {
     public static long SECURE_SEND_TIMEOUT_TO_REMOVE_PACKET = presetTime;
     private static Logger logger = LoggerFactory.getLogger(SoulissBindingNetworkParameters.class);
 
-    private static ConcurrentHashMap<Short, Thing> hashTableGateways = new ConcurrentHashMap<Short, Thing>();
+    private static ConcurrentHashMap<Byte, Thing> hashTableGateways = new ConcurrentHashMap<Byte, Thing>();
     private static ConcurrentHashMap<String, Thing> hashTableTopics = new ConcurrentHashMap<String, Thing>();
 
     private static DatagramSocket datagramSocket;
@@ -60,7 +60,7 @@ public class SoulissBindingNetworkParameters {
         SoulissBindingNetworkParameters.datagramSocket = datagramSocket;
     }
 
-    public static void addGateway(short lastByteGatewayIP, Thing thing) {
+    public static void addGateway(byte lastByteGatewayIP, Thing thing) {
         hashTableGateways.put(lastByteGatewayIP, thing);
     }
 
@@ -68,7 +68,7 @@ public class SoulissBindingNetworkParameters {
         hashTableTopics.put(sUID, thing);
     }
 
-    public static ConcurrentHashMap<Short, Thing> getHashTableGateways() {
+    public static ConcurrentHashMap<Byte, Thing> getHashTableGateways() {
         return hashTableGateways;
     }
 
@@ -80,11 +80,11 @@ public class SoulissBindingNetworkParameters {
         return hashTableTopics.get(sUID);
     }
 
-    public static Bridge getGateway(short lastByteGatewayIP) {
+    public static Bridge getGateway(byte lastByteGatewayIP) {
         return (Bridge) hashTableGateways.get(lastByteGatewayIP);
     }
 
-    public static void removeGateway(short lastByteGatewayIP) {
+    public static void removeGateway(byte lastByteGatewayIP) {
         hashTableGateways.remove(lastByteGatewayIP);
     }
 

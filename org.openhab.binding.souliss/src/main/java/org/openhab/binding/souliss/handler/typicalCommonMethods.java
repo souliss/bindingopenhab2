@@ -10,20 +10,18 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.binding.souliss.internal.protocol;
-
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
+package org.openhab.binding.souliss.handler;
 
 /**
- * This class provide to take packet, and send it to regular interval to Souliss
- * Network
+ * Result callback interface.
  *
- * @author Tonino Fazio
- * @since 1.7.0
+ * @author Tonino Fazio - Initial contribution
  */
-public class SoulissBindingSendDispatcher {
 
-    public static void put(DatagramSocket socket, DatagramPacket packet) {
-    }
+public interface typicalCommonMethods {
+    void setRawState(byte _rawState);
+
+    byte getRawState();
+
+    byte getExpectedRawState(byte bCommand);
 }

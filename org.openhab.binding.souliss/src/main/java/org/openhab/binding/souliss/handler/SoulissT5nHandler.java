@@ -12,6 +12,7 @@
  */
 package org.openhab.binding.souliss.handler;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
@@ -19,9 +20,8 @@ import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.PrimitiveType;
 import org.openhab.binding.souliss.SoulissBindingConstants;
-import org.openhab.binding.souliss.handler.SoulissGenericTypical.typicalCommonMethods;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+// import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * The {@link SoulissT5nHandler} is responsible for handling commands, which are
@@ -29,12 +29,13 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tonino Fazio - Initial contribution
  */
-public class SoulissT5nHandler extends SoulissGenericTypical implements typicalCommonMethods {
+public class SoulissT5nHandler extends SoulissGenericHandler {
 
-    private Logger logger = LoggerFactory.getLogger(SoulissT5nHandler.class);
+    // private Logger logger = LoggerFactory.getLogger(SoulissT5nHandler.class);
+    float fVal;
 
-    public SoulissT5nHandler(Thing thing) {
-        super(thing);
+    public SoulissT5nHandler(Thing _thing) {
+        super(_thing);
     }
 
     @Override
@@ -46,11 +47,37 @@ public class SoulissT5nHandler extends SoulissGenericTypical implements typicalC
         updateStatus(ThingStatus.ONLINE);
     }
 
-    @Override
     public void setState(PrimitiveType state) {
-        super.setLastStatusStored();
         if (state != null) {
             this.updateState(SoulissBindingConstants.T5N_VALUE_CHANNEL, (DecimalType) state);
         }
+    }
+
+    @Override
+    public void setRawState(byte _rawState) {
+        throw new NotImplementedException();
+    }
+
+    public void setFloatValue(float valueOf) {
+        super.setLastStatusStored();
+        if (fVal != valueOf) {
+            this.setState(DecimalType.valueOf(Float.toString(valueOf)));
+            fVal = valueOf;
+        }
+    }
+
+    @Override
+    public byte getRawState() {
+        throw new NotImplementedException();
+    }
+
+    public float getFloatState() {
+        return fVal;
+    }
+
+    @Override
+    public byte getExpectedRawState(byte bCommand) {
+        // Secure Send is disabled
+        return -1;
     }
 }

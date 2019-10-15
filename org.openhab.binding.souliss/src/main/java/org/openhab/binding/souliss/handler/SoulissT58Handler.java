@@ -13,7 +13,6 @@
 package org.openhab.binding.souliss.handler;
 
 import org.eclipse.smarthome.core.thing.Thing;
-import org.openhab.binding.souliss.handler.SoulissGenericTypical.typicalCommonMethods;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +22,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tonino Fazio - Initial contribution
  */
-public class SoulissT58Handler extends SoulissT5nHandler implements typicalCommonMethods {
+public class SoulissT58Handler extends SoulissT5nHandler {
 
     private Logger logger = LoggerFactory.getLogger(SoulissT58Handler.class);
 

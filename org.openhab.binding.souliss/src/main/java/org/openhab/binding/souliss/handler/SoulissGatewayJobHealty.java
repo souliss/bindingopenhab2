@@ -25,8 +25,8 @@ public class SoulissGatewayJobHealty extends Thread {
 
     private Logger logger = LoggerFactory.getLogger(SoulissGatewayJobHealty.class);
     private String _iPAddressOnLAN;
-    private short _userIndex;
-    private short _nodeIndex;
+    private byte _userIndex;
+    private byte _nodeIndex;
     private int _healthRefreshInterval;
 
     private SoulissGatewayHandler gw;

@@ -12,6 +12,7 @@
  */
 package org.openhab.binding.souliss.handler;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
@@ -19,10 +20,9 @@ import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.PrimitiveType;
 import org.openhab.binding.souliss.SoulissBindingConstants;
-import org.openhab.binding.souliss.handler.SoulissGenericTypical.typicalCommonMethods;
 import org.openhab.binding.souliss.internal.HalfFloatUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+// import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * The {@link SoulissT6nHandler} is responsible for handling commands, which are
@@ -31,10 +31,10 @@ import org.slf4j.LoggerFactory;
  * @author Luca Remigio - Initial contribution
  */
 
-public class SoulissT6nHandler extends SoulissGenericTypical implements typicalCommonMethods {
+public class SoulissT6nHandler extends SoulissGenericHandler {
 
-    private Logger logger = LoggerFactory.getLogger(SoulissT6nHandler.class);
-    private DecimalType _setPointValue = DecimalType.ZERO;
+    // private Logger logger = LoggerFactory.getLogger(SoulissT6nHandler.class);
+    private float fSetPointValue;
 
     public SoulissT6nHandler(Thing thing) {
         super(thing);
@@ -53,19 +53,40 @@ public class SoulissT6nHandler extends SoulissGenericTypical implements typicalC
 
     @Override
     public void initialize() {
-
         // status online
         updateStatus(ThingStatus.ONLINE);
     }
 
-    @Override
     public void setState(PrimitiveType _state) {
-        super.setLastStatusStored();
         if (_state != null) {
-            if (!_setPointValue.equals(_state)) {
-                this.updateState(SoulissBindingConstants.T6N_VALUE_CHANNEL, (DecimalType) _state);
-                _setPointValue = (DecimalType) _state;
-            }
+            this.updateState(SoulissBindingConstants.T6N_VALUE_CHANNEL, (DecimalType) _state);
         }
+    }
+
+    @Override
+    public void setRawState(byte _rawState) {
+        throw new NotImplementedException();
+    }
+
+    public void setFloatValue(float valueOf) {
+        super.setLastStatusStored();
+        if (fSetPointValue != valueOf) {
+            this.setState(DecimalType.valueOf(Float.toString(valueOf)));
+            fSetPointValue = valueOf;
+        }
+    }
+
+    @Override
+    public byte getRawState() {
+        throw new NotImplementedException();
+    }
+
+    public float getFloatState() {
+        return fSetPointValue;
+    }
+
+    @Override
+    public byte getExpectedRawState(byte bCommand) {
+        return -1;
     }
 }

@@ -25,8 +25,8 @@ public class SoulissGatewayJobPing extends Thread {
 
     private Logger logger = LoggerFactory.getLogger(SoulissGatewayJobPing.class);
     private String _iPAddressOnLAN;
-    private short _userIndex;
-    private short _nodeIndex;
+    private byte _userIndex;
+    private byte _nodeIndex;
     private int _pingRefreshInterval;
 
     private SoulissGatewayHandler gw;

@@ -27,9 +27,10 @@ import org.eclipse.smarthome.core.types.PrimitiveType;
 import org.eclipse.smarthome.core.types.RefreshType;
 import org.openhab.binding.souliss.SoulissBindingConstants;
 import org.openhab.binding.souliss.SoulissBindingProtocolConstants;
-import org.openhab.binding.souliss.handler.SoulissGenericTypical.typicalCommonMethods;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+// import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * The {@link SoulissT16Handler} is responsible for handling commands, which are
@@ -37,17 +38,19 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tonino Fazio - Initial contribution
  */
-public class SoulissT16Handler extends SoulissGenericTypical implements typicalCommonMethods {
+public class SoulissT16Handler extends SoulissGenericHandler {
     Configuration gwConfigurationMap;
     private Logger logger = LoggerFactory.getLogger(SoulissT16Handler.class);
-    OnOffType T1nState = OnOffType.OFF;
-    HSBType hsbState = HSBType.WHITE;
-    short xSleepTime = 0;
+    byte T1nRawState_byte0;
+    HSBType T1nRawState_hsb;
+
+    byte xSleepTime = 0;
 
     public SoulissT16Handler(Thing _thing) {
         super(_thing);
-        thing = _thing;
     }
+
+    HSBType _hsbState;
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
@@ -55,13 +58,13 @@ public class SoulissT16Handler extends SoulissGenericTypical implements typicalC
         if (command instanceof RefreshType) {
             switch (channelUID.getId()) {
                 case SoulissBindingConstants.ONOFF_CHANNEL:
-                    updateState(channelUID, T1nState);
+                    updateState(channelUID, getOHState_OnOff_FromSoulissVal(T1nRawState_byte0));
                     break;
                 case SoulissBindingConstants.LED_COLOR_CHANNEL:
-                    updateState(channelUID, hsbState);
+                    updateState(channelUID, (HSBType) command);
                     break;
                 case SoulissBindingConstants.DIMMER_BRIGHTNESS_CHANNEL:
-                    updateState(channelUID, PercentType.valueOf(hsbState.getBrightness().toString()));
+                    updateState(channelUID, (HSBType) command);
                     break;
             }
         } else {
@@ -78,16 +81,20 @@ public class SoulissT16Handler extends SoulissGenericTypical implements typicalC
                     break;
                 case SoulissBindingConstants.WHITE_MODE_CHANNEL:
                     if (command instanceof OnOffType) {
-                        hsbState = HSBType.fromRGB(255, 255, 255);
-                        commandSEND_RGB(SoulissBindingProtocolConstants.Souliss_T1n_Set, (short) 255, (short) 255,
-                                (short) 255);
-                        updateState(SoulissBindingConstants.LED_COLOR_CHANNEL, hsbState);
+                        _hsbState = HSBType.WHITE;
+                        // aggiorno stato tipico in memoria
+                        T1nRawState_hsb = _hsbState;
+
+                        commandSEND_RGB(SoulissBindingProtocolConstants.Souliss_T1n_Set, (byte) 255, (byte) 255,
+                                (byte) 255);
+                        updateState(SoulissBindingConstants.LED_COLOR_CHANNEL, _hsbState);
+                        updateState(SoulissBindingConstants.DIMMER_BRIGHTNESS_CHANNEL, _hsbState.getBrightness());
 
                     }
                     break;
                 case SoulissBindingConstants.SLEEP_CHANNEL:
                     if (command instanceof OnOffType) {
-                        commandSEND((short) (SoulissBindingProtocolConstants.Souliss_T1n_Timed + xSleepTime));
+                        commandSEND((byte) (SoulissBindingProtocolConstants.Souliss_T1n_Timed + xSleepTime));
                         // set Off
                         updateState(channelUID, OnOffType.OFF);
                     }
@@ -95,15 +102,7 @@ public class SoulissT16Handler extends SoulissGenericTypical implements typicalC
 
                 case SoulissBindingConstants.DIMMER_BRIGHTNESS_CHANNEL:
                     if (command instanceof PercentType) {
-                        hsbState = new HSBType(hsbState.getHue(), hsbState.getSaturation(), (PercentType) command);
-                        updateState(SoulissBindingConstants.LED_COLOR_CHANNEL, hsbState);
-                        // updateState(SoulissBindingConstants.DIMMER_BRIGHTNESS_CHANNEL,
-                        /// PercentType.valueOf(hsbState.getBrightness().toString()));
-                        commandSEND_RGB(SoulissBindingProtocolConstants.Souliss_T1n_Set,
-                                (short) (hsbState.getRed().shortValue() * (255.00 / 100)),
-                                (short) (hsbState.getGreen().shortValue() * (255.00 / 100)),
-                                (short) (hsbState.getBlue().shortValue() * (255.00 / 100)));
-
+                        setBrightness(command);
                     } else if (command instanceof OnOffType) {
                         if (command.equals(OnOffType.ON)) {
                             commandSEND(SoulissBindingProtocolConstants.Souliss_T1n_OnCmd);
@@ -126,20 +125,47 @@ public class SoulissT16Handler extends SoulissGenericTypical implements typicalC
 
                 case SoulissBindingConstants.LED_COLOR_CHANNEL:
                     if (command instanceof HSBType) {
-                        hsbState = (HSBType) command;
+                        HSBType _hsbState = (HSBType) command;
+                        T1nRawState_hsb = _hsbState;
 
-                        updateState(SoulissBindingConstants.DIMMER_BRIGHTNESS_CHANNEL,
-                                PercentType.valueOf(hsbState.getBrightness().toString()));
+                        // memorizza i valori RGB partendo dal valore HSB
                         commandSEND_RGB(SoulissBindingProtocolConstants.Souliss_T1n_Set,
-                                (short) (hsbState.getRed().shortValue() * 255.00 / 100),
-                                (short) (hsbState.getGreen().shortValue() * 255.00 / 100),
-                                (short) (hsbState.getBlue().shortValue() * 255.00 / 100));
+                                (byte) (T1nRawState_hsb.getRed().intValue() * 255 / 100),
+                                (byte) (T1nRawState_hsb.getGreen().intValue() * 255 / 100),
+                                (byte) (T1nRawState_hsb.getBlue().intValue() * 255 / 100));
+                        updateState(SoulissBindingConstants.LED_COLOR_CHANNEL, _hsbState);
+                        updateState(SoulissBindingConstants.DIMMER_BRIGHTNESS_CHANNEL, _hsbState.getBrightness());
+
+                    } else if (command instanceof PercentType) {
+                        // slide brightness
+                        setBrightness(command);
+                    } else if (command instanceof OnOffType) {
+                        if (command.equals(OnOffType.ON)) {
+                            commandSEND(SoulissBindingProtocolConstants.Souliss_T1n_OnCmd);
+
+                        } else if (command.equals(OnOffType.OFF)) {
+                            commandSEND(SoulissBindingProtocolConstants.Souliss_T1n_OffCmd);
+                        }
                     }
                     break;
-
             }
         }
+    }
 
+    private void setBrightness(Command command) {
+        // imposta il nuovo valore di brightness
+        T1nRawState_hsb = new HSBType(T1nRawState_hsb.getHue(), T1nRawState_hsb.getSaturation(), (PercentType) command);
+        updateState(SoulissBindingConstants.DIMMER_BRIGHTNESS_CHANNEL, T1nRawState_hsb.getBrightness());
+
+        // aggiorna anche lo slide del gruppo comandi colore
+        updateState(SoulissBindingConstants.LED_COLOR_CHANNEL, T1nRawState_hsb);
+
+        // invia il comando.
+        // i valori RGB sono espressi in percentuale, quindi è necessaria la conversaione
+        commandSEND_RGB(SoulissBindingProtocolConstants.Souliss_T1n_Set,
+                (byte) ((byte) T1nRawState_hsb.getRed().floatValue() * 255 / 100),
+                (byte) ((byte) T1nRawState_hsb.getGreen().floatValue() * 255 / 100),
+                (byte) ((byte) T1nRawState_hsb.getBlue().floatValue() * 255 / 100));
     }
 
     @Override
@@ -150,34 +176,85 @@ public class SoulissT16Handler extends SoulissGenericTypical implements typicalC
         gwConfigurationMap = thing.getConfiguration();
 
         if (gwConfigurationMap.get(SoulissBindingConstants.SLEEP_CHANNEL) != null) {
-            xSleepTime = ((BigDecimal) gwConfigurationMap.get(SoulissBindingConstants.SLEEP_CHANNEL)).shortValue();
+            xSleepTime = ((BigDecimal) gwConfigurationMap.get(SoulissBindingConstants.SLEEP_CHANNEL)).byteValue();
+        }
+        if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_SECURE_SEND) != null) {
+            bSecureSend = ((Boolean) gwConfigurationMap.get(SoulissBindingConstants.CONFIG_SECURE_SEND)).booleanValue();
+        }
+    }
+
+    void setState(PrimitiveType _state) {
+        super.setLastStatusStored();
+        updateState(SoulissBindingConstants.SLEEP_CHANNEL, OnOffType.OFF);
+        if (_state != null) {
+            logger.debug("T16, setting state to {}", _state.toFullString());
+            this.updateState(SoulissBindingConstants.ONOFF_CHANNEL, (OnOffType) _state);
         }
     }
 
     @Override
-    public void setState(PrimitiveType _state) {
+    public void setRawState(byte _rawState) {
+        // update Last Status stored time
         super.setLastStatusStored();
-        updateState(SoulissBindingConstants.SLEEP_CHANNEL, OnOffType.OFF);
-        if (_state != null) {
-            if (((OnOffType) _state) != this.T1nState) {
-                logger.debug("T16, setting state to {}", _state.toFullString());
-                this.updateState(SoulissBindingConstants.ONOFF_CHANNEL, (OnOffType) _state);
-                // this.updateThing(this.thing);
-                this.T1nState = (OnOffType) _state;
+        // update item state only if it is different from previous
+        if (T1nRawState_byte0 != _rawState) {
+            this.setState(getOHState_OnOff_FromSoulissVal(_rawState));
+        }
+        T1nRawState_byte0 = _rawState;
+    }
+
+    public void setRawState_command(byte _rawState_byte0) {
+        super.setLastStatusStored();
+        if (_rawState_byte0 != T1nRawState_byte0) {
+            this.setState(getOHState_OnOff_FromSoulissVal(_rawState_byte0));
+        }
+    }
+
+    public void setRawState_RGB(byte _rawStateRED_byte1, byte _rawStateGREEN_byte2, byte _rawStateBLU_byte3) {
+        super.setLastStatusStored();
+
+        HSBType _hsbState = gethsb(_rawStateRED_byte1, _rawStateGREEN_byte2, _rawStateBLU_byte3);
+
+        if (_hsbState != T1nRawState_hsb) {
+            T1nRawState_hsb = _hsbState;
+
+            // logger.debug("T16, setting color to {},{},{}", T1nRawState_hsb._rawStateRED_byte1, _rawStateGREEN_byte2,
+            // _rawStateBLU_byte3);
+
+            updateState(SoulissBindingConstants.DIMMER_BRIGHTNESS_CHANNEL, T1nRawState_hsb.getBrightness());
+            updateState(SoulissBindingConstants.LED_COLOR_CHANNEL, T1nRawState_hsb);
+        }
+    }
+
+    @Override
+    public byte getRawState() {
+        return T1nRawState_byte0;
+    }
+
+    public byte getRawState_command() {
+        return T1nRawState_byte0;
+    }
+
+    // public byte[] getRawState_values() {
+    // return new byte[] { T1nRawStateRED_byte1, T1nRawStateGREEN_byte2, T1nRawStateBLU_byte3 };
+    // }
+
+    @Override
+    public byte getExpectedRawState(byte bCmd) {
+        if (bSecureSend) {
+            if (bCmd == SoulissBindingProtocolConstants.Souliss_T1n_OnCmd) {
+                return SoulissBindingProtocolConstants.Souliss_T1n_OnCoil;
+            } else if (bCmd == SoulissBindingProtocolConstants.Souliss_T1n_OffCmd) {
+                return SoulissBindingProtocolConstants.Souliss_T1n_OffCoil;
+            } else if (bCmd >= SoulissBindingProtocolConstants.Souliss_T1n_Timed) {
+                // SLEEP
+                return SoulissBindingProtocolConstants.Souliss_T1n_OnCoil;
             }
         }
+        return -1;
     }
 
-    public void setStateRGB(short _stateRED, short _stateGREEN, short _stateBLU) {
-        HSBType _hsbState = HSBType.fromRGB(_stateRED, _stateGREEN, _stateBLU);
-        logger.debug("T16, setting color to {},{},{}", _stateRED, _stateGREEN, _stateBLU);
-        if (_hsbState != hsbState) {
-            updateState(SoulissBindingConstants.DIMMER_BRIGHTNESS_CHANNEL,
-                    PercentType.valueOf(hsbState.getBrightness().toString()));
-
-            updateState(SoulissBindingConstants.LED_COLOR_CHANNEL, hsbState);
-        }
-
+    HSBType gethsb(byte _rawStateRED_byte1, byte _rawStateGREEN_byte2, byte _rawStateBLU_byte3) {
+        return HSBType.fromRGB(_rawStateRED_byte1 & 0xFF, _rawStateGREEN_byte2 & 0xFF, _rawStateBLU_byte3 & 0xFF);
     }
-
 }

@@ -22,9 +22,6 @@ import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.PrimitiveType;
 import org.openhab.binding.souliss.SoulissBindingConstants;
 import org.openhab.binding.souliss.SoulissBindingProtocolConstants;
-import org.openhab.binding.souliss.handler.SoulissGenericTypical.typicalCommonMethods;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The {@link SoulissT42Handler} is responsible for handling commands, which are
@@ -32,15 +29,15 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tonino Fazio - Initial contribution
  */
-public class SoulissT42Handler extends SoulissGenericTypical implements typicalCommonMethods {
+public class SoulissT42Handler extends SoulissGenericHandler {
 
     Configuration gwConfigurationMap;
 
-    private Logger logger = LoggerFactory.getLogger(SoulissT11Handler.class);
+    // private Logger logger = LoggerFactory.getLogger(SoulissT11Handler.class);
+    byte T4nRawState;
 
     public SoulissT42Handler(Thing _thing) {
         super(_thing);
-        thing = _thing;
     }
 
     // called on every status change or change request
@@ -62,11 +59,15 @@ public class SoulissT42Handler extends SoulissGenericTypical implements typicalC
 
     @Override
     public void initialize() {
-        // Long running initialization should be done asynchronously in background.
         updateStatus(ThingStatus.ONLINE);
+
+        gwConfigurationMap = thing.getConfiguration();
+        if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_SECURE_SEND) != null) {
+            bSecureSend = ((Boolean) gwConfigurationMap.get(SoulissBindingConstants.CONFIG_SECURE_SEND)).booleanValue();
+        }
+
     }
 
-    @Override
     public void setState(PrimitiveType _state) {
         if (_state != null) {
             if (_state instanceof StringType) {
@@ -84,5 +85,32 @@ public class SoulissT42Handler extends SoulissGenericTypical implements typicalC
 
             super.setLastStatusStored();
         }
+    }
+
+    @Override
+    public void setRawState(byte _rawState) {
+
+        // update Last Status stored time
+        super.setLastStatusStored();
+        // update item state only if it is different from previous
+        if (T4nRawState != _rawState) {
+            this.setState(getOHState_OnOff_FromSoulissVal(_rawState));
+        }
+        T4nRawState = _rawState;
+    }
+
+    @Override
+    public byte getRawState() {
+        return T4nRawState;
+    }
+
+    @Override
+    public byte getExpectedRawState(byte bCmd) {
+        if (bSecureSend) {
+            if (bCmd == SoulissBindingProtocolConstants.Souliss_T4n_ReArm) {
+                return SoulissBindingProtocolConstants.Souliss_T4n_Antitheft;
+            }
+        }
+        return -1;
     }
 }
