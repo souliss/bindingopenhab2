@@ -13,6 +13,7 @@
 
 package org.openhab.binding.souliss.handler;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.OnOffType;
@@ -28,8 +29,6 @@ import org.openhab.binding.souliss.SoulissBindingProtocolConstants;
 import org.openhab.binding.souliss.internal.HalfFloatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * The {@link SoulissT31Handler} is responsible for handling commands, which are

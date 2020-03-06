@@ -22,6 +22,7 @@ import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
+import org.eclipse.smarthome.core.thing.ThingRegistry;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
@@ -51,6 +52,7 @@ public class SoulissGatewayHandler extends BaseBridgeHandler {
     boolean bGatewayDetected = false;
 
     Configuration gwConfigurationMap;
+    ThingRegistry thingRegistry;
 
     public int pingRefreshInterval;
     public int subscriptionRefreshInterval;
@@ -227,9 +229,10 @@ public class SoulissGatewayHandler extends BaseBridgeHandler {
                 IPAddressOnLAN, nodeIndex, userIndex, nodes);
     }
 
-    @SuppressWarnings({ "deprecation", "null" })
+    @SuppressWarnings("null")
     public String getGatewayIP() {
         if (thing.getBridgeUID() != null) {
+            // FIXME
             return ((SoulissGatewayHandler) thingRegistry.get(thing.getBridgeUID()).getHandler()).IPAddressOnLAN;
         }
         return null;
