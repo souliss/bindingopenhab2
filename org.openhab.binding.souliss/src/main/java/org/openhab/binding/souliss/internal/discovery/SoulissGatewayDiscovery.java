@@ -33,7 +33,6 @@ import org.openhab.binding.souliss.SoulissBindingConstants;
 import org.openhab.binding.souliss.SoulissBindingProtocolConstants;
 import org.openhab.binding.souliss.handler.SoulissGatewayHandler;
 import org.openhab.binding.souliss.internal.SoulissDatagramSocketFactory;
-import org.openhab.binding.souliss.internal.soulissHandlerFactory;
 import org.openhab.binding.souliss.internal.discovery.SoulissDiscoverJob.DiscoverResult;
 import org.openhab.binding.souliss.internal.protocol.SoulissBindingNetworkParameters;
 import org.openhab.binding.souliss.internal.protocol.SoulissBindingUDPServerJob;
