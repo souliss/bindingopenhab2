@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  * @author Tonino Fazio
  * @since 1.7.0
  */
-public abstract class SoulissGenericHandler extends BaseThingHandler implements typicalCommonMethods {
+public abstract class SoulissGenericHandler extends BaseThingHandler implements TypicalCommonMethods {
 
     Thing thing;
 

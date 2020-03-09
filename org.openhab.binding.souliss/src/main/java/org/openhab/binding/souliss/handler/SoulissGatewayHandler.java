@@ -18,6 +18,8 @@ import java.util.Iterator;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.ChannelUID;
@@ -42,15 +44,16 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tonino Fazio - Initial contribution
  */
+@NonNullByDefault
 public class SoulissGatewayHandler extends BaseBridgeHandler {
 
     private Logger logger = LoggerFactory.getLogger(SoulissGatewayHandler.class);
-    public DatagramSocket datagramSocket_defaultPort;
-    SoulissBindingUDPServerJob UDP_Server_DefaultPort_RunnableClass = null;
+    public @Nullable DatagramSocket datagramSocket_defaultPort;
+    private @Nullable SoulissBindingUDPServerJob UDP_Server_DefaultPort_RunnableClass;
 
     boolean bGatewayDetected = false;
 
-    Configuration gwConfigurationMap;
+    private @Nullable Configuration gwConfigurationMap;
 
     public int pingRefreshInterval;
     public int subscriptionRefreshInterval;
@@ -64,14 +67,14 @@ public class SoulissGatewayHandler extends BaseBridgeHandler {
     public int souliss_gateway_port;
     public byte userIndex;
     public byte nodeIndex;
-    public String IPAddressOnLAN;
+    public @Nullable String IPAddressOnLAN;
     private int nodes;
     private int maxTypicalXnode;
     private int countPING_KO = 0;
     private int maxnodes = 0;
     private int maxrequests = 0;
 
-    private ScheduledFuture<?> UDPserverJob_DefaultPort;
+    private @Nullable ScheduledFuture<?> UDPserverJob_DefaultPort;
 
     public SoulissGatewayHandler(Bridge _bridge) {
         super(_bridge);
@@ -210,7 +213,7 @@ public class SoulissGatewayHandler extends BaseBridgeHandler {
     @Override
     public void handleRemoval() {
         SoulissBindingNetworkParameters.removeGateway(Byte.parseByte(IPAddressOnLAN.split("\\.")[3]));
-        UDP_Server_DefaultPort_RunnableClass = null;
+        // UDP_Server_DefaultPort_RunnableClass = null;
         logger.debug("Gateway handler removing");
     }
 
@@ -227,13 +230,15 @@ public class SoulissGatewayHandler extends BaseBridgeHandler {
                 IPAddressOnLAN, nodeIndex, userIndex, nodes);
     }
 
-    @SuppressWarnings({ "deprecation", "null" })
-    public String getGatewayIP() {
-        if (thing.getBridgeUID() != null) {
-            return ((SoulissGatewayHandler) thingRegistry.get(thing.getBridgeUID()).getHandler()).IPAddressOnLAN;
-        }
-        return null;
-    }
+    /*
+     * public String getGatewayIP() {
+     * bridge = (Bridge) thing.getBridgeUID();
+     * if (thing.getBridgeUID() != null) {
+     * return ((SoulissGatewayHandler) (Bridge) this.getThingByUID(bridge.getUID()).getHandler()).IPAddressOnLAN;
+     * }
+     * return null;
+     * }
+     */
 
     public void setNodes(int nodes) {
         this.nodes = nodes;

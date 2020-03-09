@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<features xmlns="http://karaf.apache.org/xmlns/features/v1.6.0" name="org.openhab.binding.souliss-2.5.0-SNAPSHOT">
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.6.0" name="org.openhab.binding.souliss-2.5.3-SNAPSHOT">
     <feature version="0.0.0">
         <feature>openhab-runtime-base</feature>
-        <feature>wrap</feature>
-        <bundle>mvn:com.google.code.findbugs/jsr305/3.0.2</bundle>
-        <bundle>mvn:com.google.guava/failureaccess/1.0.1</bundle>
-        <bundle>mvn:com.google.guava/guava/28.0-jre</bundle>
-        <bundle>mvn:org.checkerframework/checker-qual/2.8.1</bundle>
-        <bundle>mvn:org.openhab.addons.bundles/org.openhab.binding.souliss/2.5.0-SNAPSHOT</bundle>
-        <bundle>wrap:mvn:com.google.errorprone/error_prone_annotations/2.3.2</bundle>
-        <bundle>wrap:mvn:com.google.guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava</bundle>
-        <bundle>wrap:mvn:com.google.j2objc/j2objc-annotations/1.3</bundle>
-        <bundle>wrap:mvn:org.codehaus.mojo/animal-sniffer-annotations/1.17</bundle>
+        <bundle>mvn:org.openhab.addons.bundles/org.openhab.binding.souliss/2.5.3-SNAPSHOT</bundle>
     </feature>
 </features>
