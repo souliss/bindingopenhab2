@@ -212,16 +212,20 @@ public class SoulissGatewayHandler extends BaseBridgeHandler {
 
     @Override
     public void handleRemoval() {
-        SoulissBindingNetworkParameters.removeGateway(Byte.parseByte(IPAddressOnLAN.split("\\.")[3]));
-        // UDP_Server_DefaultPort_RunnableClass = null;
-        logger.debug("Gateway handler removing");
+        if (IPAddressOnLAN != null) {
+            SoulissBindingNetworkParameters.removeGateway((byte) Integer.parseInt(IPAddressOnLAN.split("\\.")[3]));
+            // UDP_Server_DefaultPort_RunnableClass = null;
+            logger.debug("Gateway handler removing");
+        }
     }
 
     @Override
     public void thingUpdated(Thing thing) {
         logger.debug("Thing Updated: {}", thing.getThingTypeUID());
-        SoulissBindingNetworkParameters.removeGateway((Byte.parseByte((IPAddressOnLAN.split("\\.")[3]))));
-        // .removeGateway((byte) (Byte.parseByte((IPAddressOnLAN.split("\\.")[3]) & (byte) 0xFF));
+        if (IPAddressOnLAN != null) {
+            SoulissBindingNetworkParameters.removeGateway((byte) Integer.parseInt(IPAddressOnLAN.split("\\.")[3]));
+            // .removeGateway((byte) (Byte.parseByte((IPAddressOnLAN.split("\\.")[3]) & (byte) 0xFF));
+        }
         this.thing = thing;
     }
 

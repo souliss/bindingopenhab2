@@ -396,7 +396,7 @@ public class SoulissBindingUDPDecoder {
 
         Iterator thingsIterator;
         if (gateway != null && gateway.IPAddressOnLAN != null
-                && Byte.parseByte(gateway.IPAddressOnLAN.split("\\.")[3]) == lastByteGatewayIP) {
+                && ((byte) Integer.parseInt(gateway.IPAddressOnLAN.split("\\.")[3])) == lastByteGatewayIP) {
             thingsIterator = gateway.getThing().getThings().iterator();
             boolean bFound = false;
             Thing typ = null;
@@ -406,16 +406,14 @@ public class SoulissBindingUDPDecoder {
                 ThingHandler handler = typ.getHandler();
                 if (handler != null) { // execute it only if binding is Souliss and update is for my
                                        // Gateway
-                    if (sUID_Array[0].equals(SoulissBindingConstants.BINDING_ID)
-                            && Byte.parseByte(((SoulissGenericHandler) handler).getGatewayIP().toString()
-                                    .split("\\.")[3]) == lastByteGatewayIP) {
+                    if (sUID_Array[0].equals(SoulissBindingConstants.BINDING_ID) && (byte) Integer.parseInt(
+                            ((SoulissGenericHandler) handler).getGatewayIP().split("\\.")[3]) == lastByteGatewayIP) {
 
-                        if (((SoulissGenericHandler) handler) != null
-                                && ((SoulissGenericHandler) handler).getNode() == tgtnode) { // execute it
-                                                                                             // only
-                                                                                             // if it is
-                                                                                             // node
-                                                                                             // to update
+                        if (((SoulissGenericHandler) handler).getNode() == tgtnode) { // execute it
+                                                                                      // only
+                                                                                      // if it is
+                                                                                      // node
+                                                                                      // to update
                             // ...now check slot
                             int slot = ((SoulissGenericHandler) handler).getSlot();
                             // get typical value

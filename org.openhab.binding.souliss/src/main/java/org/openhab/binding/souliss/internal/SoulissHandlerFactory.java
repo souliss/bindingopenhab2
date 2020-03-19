@@ -84,7 +84,7 @@ public class SoulissHandlerFactory extends BaseThingHandlerFactory {
             // get last byte of IP number
             Configuration gwConfigurationMap = thing.getConfiguration();
             String IPAddressOnLAN = (String) gwConfigurationMap.get(SoulissBindingConstants.CONFIG_IP_ADDRESS);
-            SoulissBindingNetworkParameters.addGateway(Byte.parseByte(IPAddressOnLAN.split("\\.")[3]), thing);
+            SoulissBindingNetworkParameters.addGateway((byte) Integer.parseInt(IPAddressOnLAN.split("\\.")[3]), thing);
             return new SoulissGatewayHandler((Bridge) thing);
         } else if (thingTypeUID.toString().equals(T11_THING_TYPE.getAsString().toLowerCase())) {
             logger.debug("Create handler for T11 '{}'", thingTypeUID);
