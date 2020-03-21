@@ -207,31 +207,36 @@ public class SoulissBindingUDPDecoder {
             byte tgtnode = mac.get(3);
             int numberOf = mac.get(4);
 
-            SoulissGatewayHandler gateway = (SoulissGatewayHandler) SoulissBindingNetworkParameters
-                    .getGateway(lastByteGatewayIP).getHandler();
-            if (gateway != null) {
-                int typXnodo = gateway.getMaxTypicalXnode();
+            SoulissGatewayHandler gateway;
+            if (SoulissBindingNetworkParameters.getGateway(lastByteGatewayIP) != null) {
+                gateway = (SoulissGatewayHandler) SoulissBindingNetworkParameters.getGateway(lastByteGatewayIP)
+                        .getHandler();
 
-                // creates Souliss nodes
-                for (int j = 0; j < numberOf; j++) {
-                    if (mac.get(5 + j) != 0) {// create only not-empty typicals
-                        if (!(mac.get(5 + j) == SoulissBindingProtocolConstants.Souliss_T_related)) {
-                            byte typical = mac.get(5 + j);
-                            byte slot = (byte) (j % typXnodo);
-                            byte node = (byte) (j / typXnodo + tgtnode);
-                            if (discoverResult != null) {
-                                logger.debug("Thing Detected. IP (last byte): {}, Typical: 0x{}, Node: {}, Slot: {} ",
-                                        lastByteGatewayIP, Integer.toHexString(typical), node, slot);
-                                discoverResult.thingDetected_Typicals(lastByteGatewayIP, typical, node, slot);
-                            } else {
-                                logger.debug("decodeTypRequest aborted. 'discoverResult' is null");
+                if (gateway != null) {
+                    int typXnodo = gateway.getMaxTypicalXnode();
+
+                    // creates Souliss nodes
+                    for (int j = 0; j < numberOf; j++) {
+                        if (mac.get(5 + j) != 0) {// create only not-empty typicals
+                            if (!(mac.get(5 + j) == SoulissBindingProtocolConstants.Souliss_T_related)) {
+                                byte typical = mac.get(5 + j);
+                                byte slot = (byte) (j % typXnodo);
+                                byte node = (byte) (j / typXnodo + tgtnode);
+                                if (discoverResult != null) {
+                                    logger.debug(
+                                            "Thing Detected. IP (last byte): {}, Typical: 0x{}, Node: {}, Slot: {} ",
+                                            lastByteGatewayIP, Integer.toHexString(typical), node, slot);
+                                    discoverResult.thingDetected_Typicals(lastByteGatewayIP, typical, node, slot);
+                                } else {
+                                    logger.debug("decodeTypRequest aborted. 'discoverResult' is null");
+                                }
                             }
                         }
                     }
                 }
             }
         } catch (Exception uy) {
-            logger.error("decodeTypRequest ERROR");
+            logger.error("decodeTypRequest ERROR: %s", uy);
         }
     }
 
@@ -475,8 +480,8 @@ public class SoulissBindingUDPDecoder {
                                             + " - bit5 (fan3 on-off): " + getBitState(sVal, 5)
                                             + " - bit6 (Manual/automatic fan mode): " + getBitState(sVal, 6)
                                             + " - bit7 (heating/cooling mode): " + getBitState(sVal, 7));
-                                    ((SoulissT31Handler) handler).setRawStateValues(sVal, getByteAtSlot(mac, slot + 1),
-                                            getByteAtSlot(mac, slot + 2));
+                                    ((SoulissT31Handler) handler).setRawStateValues(sVal, getFloatAtSlot(mac, slot + 1),
+                                            getFloatAtSlot(mac, slot + 3));
 
                                     break;
                                 case SoulissBindingConstants.T41:

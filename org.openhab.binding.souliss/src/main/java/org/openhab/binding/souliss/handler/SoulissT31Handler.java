@@ -215,7 +215,7 @@ public class SoulissT31Handler extends SoulissGenericHandler {
 
     String sMessage = "";
 
-    public void setRawStateValues(byte _rawState_byte0, float _valTemp, byte _valSetPoint) {
+    public void setRawStateValues(byte _rawState_byte0, float _valTemp, float _valSetPoint) {
 
         sMessage = "";
         switch (getBitState(_rawState_byte0, 0)) {
