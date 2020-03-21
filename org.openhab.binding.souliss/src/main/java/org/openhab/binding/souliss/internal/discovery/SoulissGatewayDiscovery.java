@@ -115,10 +115,11 @@ public class SoulissGatewayDiscovery extends AbstractDiscoveryService implements
      */
     @Override
     public void gatewayDetected(InetAddress addr, String id) {
-        logger.debug("Souliss gateway found " + addr.getHostName() + " " + id);
-        gatewayUID = new ThingUID(SoulissBindingConstants.GATEWAY_THING_TYPE, id);
+        logger.debug("Souliss gateway found " + addr.getHostName());
+        gatewayUID = new ThingUID(SoulissBindingConstants.GATEWAY_THING_TYPE,
+                Integer.toString((Byte.parseByte(id) & 0xFF)));
 
-        String label = "Souliss Gateway " + id;
+        String label = "Souliss Gateway " + (Byte.parseByte(id) & 0xFF);
         Map<String, Object> properties = new TreeMap<>();
         // properties.put(SoulissBindingConstants.CONFIG_ID, id);
         properties.put(SoulissBindingConstants.CONFIG_IP_ADDRESS, addr.getHostAddress());
