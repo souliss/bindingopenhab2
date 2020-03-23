@@ -22,8 +22,6 @@ import org.eclipse.smarthome.core.thing.Thing;
  */
 public class SoulissT67Handler extends SoulissT6nHandler {
 
-    private float analogSetpointValue;
-
     // constructor
     public SoulissT67Handler(Thing _thing) {
         super(_thing);

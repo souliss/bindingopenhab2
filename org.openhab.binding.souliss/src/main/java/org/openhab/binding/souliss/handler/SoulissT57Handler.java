@@ -13,8 +13,6 @@
 package org.openhab.binding.souliss.handler;
 
 import org.eclipse.smarthome.core.thing.Thing;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The {@link SoulissT57Handler} is responsible for handling commands, which are
@@ -23,8 +21,6 @@ import org.slf4j.LoggerFactory;
  * @author Tonino Fazio - Initial contribution
  */
 public class SoulissT57Handler extends SoulissT5nHandler {
-
-    private Logger logger = LoggerFactory.getLogger(SoulissT57Handler.class);
 
     public SoulissT57Handler(Thing thing) {
         super(thing);

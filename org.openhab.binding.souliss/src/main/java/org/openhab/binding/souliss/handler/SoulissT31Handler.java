@@ -27,8 +27,6 @@ import org.eclipse.smarthome.core.types.RefreshType;
 import org.openhab.binding.souliss.SoulissBindingConstants;
 import org.openhab.binding.souliss.SoulissBindingProtocolConstants;
 import org.openhab.binding.souliss.internal.HalfFloatUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The {@link SoulissT31Handler} is responsible for handling commands, which are
@@ -47,7 +45,7 @@ public class SoulissT31Handler extends SoulissGenericHandler {
 
     StringType _lastModeState = StringType.EMPTY;
     StringType _modeStateValue = StringType.EMPTY;
-    private Logger logger = LoggerFactory.getLogger(SoulissT11Handler.class);
+
     DecimalType _setMeasuredValue = DecimalType.ZERO;
 
     public SoulissT31Handler(Thing _thing) {
@@ -67,7 +65,8 @@ public class SoulissT31Handler extends SoulissGenericHandler {
                     if (command.equals(OnOffType.OFF)) {
                         commandSEND(SoulissBindingProtocolConstants.Souliss_T3n_ShutDown);
                     } else {
-                        if (_modeStateValue.equals(SoulissBindingConstants.T31_HEATINGMODE_MESSAGE_MODE_CHANNEL)) {
+                        if (_modeStateValue.toString()
+                                .equals(SoulissBindingConstants.T31_HEATINGMODE_MESSAGE_MODE_CHANNEL)) {
                             commandSEND(SoulissBindingProtocolConstants.Souliss_T3n_Heating);
                         } else {
                             commandSEND(SoulissBindingProtocolConstants.Souliss_T3n_Cooling);
@@ -75,7 +74,7 @@ public class SoulissT31Handler extends SoulissGenericHandler {
                     }
                     break;
                 case SoulissBindingConstants.T31_MODE_CHANNEL:
-                    if (command.equals(SoulissBindingConstants.T31_HEATINGMODE_MESSAGE_MODE_CHANNEL)) {
+                    if (command.toString().equals(SoulissBindingConstants.T31_HEATINGMODE_MESSAGE_MODE_CHANNEL)) {
                         commandSEND(SoulissBindingProtocolConstants.Souliss_T3n_Heating);
                     } else {
                         commandSEND(SoulissBindingProtocolConstants.Souliss_T3n_Cooling);

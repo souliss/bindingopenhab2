@@ -18,8 +18,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.openhab.binding.souliss.internal.discovery.SoulissDiscoverJob.DiscoverResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class contain parameter of Souliss Network.
@@ -38,14 +36,12 @@ public class SoulissBindingNetworkParameters {
     public static int SEND_MIN_DELAY = presetTime;
     public static long SECURE_SEND_TIMEOUT_TO_REQUEUE = presetTime;
     public static long SECURE_SEND_TIMEOUT_TO_REMOVE_PACKET = presetTime;
-    private static Logger logger = LoggerFactory.getLogger(SoulissBindingNetworkParameters.class);
 
     private static ConcurrentHashMap<Byte, Thing> hashTableGateways = new ConcurrentHashMap<Byte, Thing>();
     private static ConcurrentHashMap<String, Thing> hashTableTopics = new ConcurrentHashMap<String, Thing>();
 
     private static DatagramSocket datagramSocket;
     public static DiscoverResult discoverResult;
-    private static SoulissBindingUDPServerJob UDP_Server;
 
     public static DatagramSocket getDatagramSocket() {
         return datagramSocket;

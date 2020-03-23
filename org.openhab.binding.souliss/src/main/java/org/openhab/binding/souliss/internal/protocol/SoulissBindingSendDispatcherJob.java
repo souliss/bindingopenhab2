@@ -13,7 +13,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.concurrent.ScheduledFuture;
 
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Thing;
@@ -134,8 +133,6 @@ public class SoulissBindingSendDispatcherJob implements Runnable {
         }
         bPopSuspend = false;
     }
-
-    private ScheduledFuture<?> UDPserverJob_DefaultPort;
 
     @Override
     public void run() {
@@ -314,14 +311,14 @@ public class SoulissBindingSendDispatcherJob implements Runnable {
         } catch (Exception ex) {
         }
 
-        Iterator thingsIterator;
+        Iterator<Thing> thingsIterator;
         if (gateway != null && gateway.IPAddressOnLAN != null
                 && (byte) Integer.parseInt(gateway.IPAddressOnLAN.split("\\.")[3]) == _lastByteGatewayIP) {
             thingsIterator = gateway.getThing().getThings().iterator();
             boolean bFound = false;
             Thing typ = null;
             while (thingsIterator.hasNext() && !bFound) {
-                typ = (Thing) thingsIterator.next();
+                typ = thingsIterator.next();
                 String sUID_Array[] = typ.getUID().getAsString().split(":");
                 SoulissGenericHandler handler = (SoulissGenericHandler) typ.getHandler();
                 if (handler != null) { // execute it only if binding is Souliss and update is for my
@@ -329,7 +326,7 @@ public class SoulissBindingSendDispatcherJob implements Runnable {
                     if (sUID_Array[0].equals(SoulissBindingConstants.BINDING_ID) && (byte) Integer
                             .parseInt(handler.getGatewayIP().toString().split("\\.")[3]) == _lastByteGatewayIP) {
 
-                        if ((handler) != null && handler.getNode() == node && handler.getSlot() == slot) {
+                        if (handler.getNode() == node && handler.getSlot() == slot) {
 
                             return handler;
                         }

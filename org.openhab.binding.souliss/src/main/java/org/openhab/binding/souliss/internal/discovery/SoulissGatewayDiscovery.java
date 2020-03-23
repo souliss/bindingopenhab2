@@ -56,7 +56,6 @@ public class SoulissGatewayDiscovery extends AbstractDiscoveryService implements
     SoulissBindingUDPServerJob UDP_Server_RunnableClass = null;
 
     private ScheduledFuture<?> discoveryJob;
-    private ScheduledFuture<?> UDPserverJob;
 
     public SoulissGatewayDiscovery() throws IllegalArgumentException, UnknownHostException {
         super(SoulissBindingConstants.SUPPORTED_THING_TYPES_UIDS, SoulissBindingConstants.DISCOVERY_TIMEOUT_IN_SECONDS,
@@ -79,8 +78,8 @@ public class SoulissGatewayDiscovery extends AbstractDiscoveryService implements
             UDP_Server_RunnableClass = new SoulissBindingUDPServerJob(datagramSocket,
                     SoulissBindingNetworkParameters.discoverResult);
 
-            UDPserverJob = scheduler.scheduleAtFixedRate(UDP_Server_RunnableClass, 100,
-                    SoulissBindingConstants.SERVER_CICLE_IN_MILLIS, TimeUnit.MILLISECONDS);
+            scheduler.scheduleAtFixedRate(UDP_Server_RunnableClass, 100, SoulissBindingConstants.SERVER_CICLE_IN_MILLIS,
+                    TimeUnit.MILLISECONDS);
 
         } else {
             logger.debug("Error - datagramSocket is null - Server not started");
@@ -182,6 +181,7 @@ public class SoulissGatewayDiscovery extends AbstractDiscoveryService implements
         thingDiscovered(discoveryResult);
     }
 
+    @SuppressWarnings("null")
     @Override
     public void thingDetected_Typicals(byte lastByteGatewayIP, byte typical, byte node, byte slot) {
         ThingUID thingUID = null;

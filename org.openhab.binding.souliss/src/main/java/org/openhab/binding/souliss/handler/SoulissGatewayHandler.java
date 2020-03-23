@@ -15,7 +15,6 @@ package org.openhab.binding.souliss.handler;
 import java.math.BigDecimal;
 import java.net.DatagramSocket;
 import java.util.Iterator;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -71,10 +70,8 @@ public class SoulissGatewayHandler extends BaseBridgeHandler {
     private int nodes;
     private int maxTypicalXnode;
     private int countPING_KO = 0;
-    private int maxnodes = 0;
-    private int maxrequests = 0;
-
-    private @Nullable ScheduledFuture<?> UDPserverJob_DefaultPort;
+    // private int maxnodes = 0;
+    // private int maxrequests = 0;
 
     public SoulissGatewayHandler(Bridge _bridge) {
         super(_bridge);
@@ -85,129 +82,138 @@ public class SoulissGatewayHandler extends BaseBridgeHandler {
     public void handleCommand(ChannelUID channelUID, Command command) {
     }
 
+    @SuppressWarnings("null")
     @Override
     public void initialize() {
         logger.debug("initializing server handler for thing {}", getThing());
 
         gwConfigurationMap = bridge.getConfiguration();
         IPAddressOnLAN = (String) gwConfigurationMap.get(SoulissBindingConstants.CONFIG_IP_ADDRESS);
-
-        if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_LOCAL_PORT) != null) {
-            preferred_local_port = ((BigDecimal) gwConfigurationMap.get(SoulissBindingConstants.CONFIG_LOCAL_PORT))
-                    .intValue();
-            logger.debug("Get Preferred Local Port: {}", preferred_local_port);
-        }
-
-        if (preferred_local_port < 0 && preferred_local_port > 65000) {
-            bridge.getConfiguration().put(SoulissBindingConstants.CONFIG_LOCAL_PORT, 0);
-            logger.debug("Set Preferred Local Port to {}", 0);
-        }
-
-        if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_PORT) != null) {
-            souliss_gateway_port = ((BigDecimal) gwConfigurationMap.get(SoulissBindingConstants.CONFIG_PORT))
-                    .intValue();
-            logger.debug("Get Souliss Gateway Port: {}", souliss_gateway_port);
-        }
-        if (souliss_gateway_port < 0 && souliss_gateway_port > 65000)
-
-        {
-            bridge.getConfiguration().put(SoulissBindingConstants.CONFIG_PORT,
-                    SoulissBindingUDPConstants.SOULISS_GATEWAY_DEFAULT_PORT);
-            logger.debug("Set Souliss Gateway Port to {}", SoulissBindingUDPConstants.SOULISS_GATEWAY_DEFAULT_PORT);
-        }
-
-        if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_USER_INDEX) != null)
-
-        {
-            userIndex = ((BigDecimal) gwConfigurationMap.get(SoulissBindingConstants.CONFIG_USER_INDEX)).byteValue();
-            logger.debug("Get User Index: {}", userIndex);
-            if (userIndex < 0 && userIndex > 255) {
-                bridge.getConfiguration().put(SoulissBindingConstants.CONFIG_USER_INDEX,
-                        SoulissBindingUDPConstants.SOULISS_DEFAULT_USER_INDEX);
-                logger.debug("Set User Index to {}", SoulissBindingUDPConstants.SOULISS_DEFAULT_USER_INDEX);
+        if (gwConfigurationMap == null) {
+            logger.debug("Gateway Handler - Error in Configuration Map", getThing());
+        } else {
+            if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_LOCAL_PORT) != null) {
+                preferred_local_port = ((BigDecimal) gwConfigurationMap.get(SoulissBindingConstants.CONFIG_LOCAL_PORT))
+                        .intValue();
+                logger.debug("Get Preferred Local Port: {}", preferred_local_port);
             }
-        }
 
-        if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_NODE_INDEX) != null) {
-            nodeIndex = ((BigDecimal) gwConfigurationMap.get(SoulissBindingConstants.CONFIG_NODE_INDEX)).byteValue();
-            logger.debug("Get Node Index: {}", nodeIndex);
-        }
-        if (nodeIndex < 0 && nodeIndex > 255) {
-            bridge.getConfiguration().put(SoulissBindingConstants.CONFIG_NODE_INDEX,
-                    SoulissBindingUDPConstants.SOULISS_DEFAULT_NODE_INDEX);
-            logger.debug("Set Node Index to {}", SoulissBindingUDPConstants.SOULISS_DEFAULT_NODE_INDEX);
-        }
-
-        if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_NODE_INDEX) != null) {
-            nodeIndex = ((BigDecimal) gwConfigurationMap.get(SoulissBindingConstants.CONFIG_NODE_INDEX)).byteValue();
-            logger.debug("Get Node Index: {}", nodeIndex);
-        }
-
-        if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_PING_REFRESH) != null) {
-            pingRefreshInterval = ((BigDecimal) gwConfigurationMap.get(SoulissBindingConstants.CONFIG_PING_REFRESH))
-                    .intValue();
-            logger.debug("Get ping refresh interval: {}", pingRefreshInterval);
-        }
-        if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_SUBSCRIPTION_REFRESH) != null) {
-            subscriptionRefreshInterval = ((BigDecimal) gwConfigurationMap
-                    .get(SoulissBindingConstants.CONFIG_SUBSCRIPTION_REFRESH)).intValue();
-            logger.debug("Get ping refresh interval: {}", pingRefreshInterval);
-        }
-        if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_HEALTHY_REFRESH) != null) {
-            healthRefreshInterval = ((BigDecimal) gwConfigurationMap
-                    .get(SoulissBindingConstants.CONFIG_HEALTHY_REFRESH)).intValue();
-            logger.debug("Get health refresh interval: {}", healthRefreshInterval);
-        }
-
-        if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_SEND_REFRESH) != null) {
-            sendRefreshInterval = ((BigDecimal) gwConfigurationMap.get(SoulissBindingConstants.CONFIG_SEND_REFRESH))
-                    .intValue();
-            logger.debug("Get send refresh interval: {}", sendRefreshInterval);
-        }
-
-        if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_TIMEOUT_TO_REQUEUE) != null) {
-            sendTimeoutToRequeue = ((BigDecimal) gwConfigurationMap
-                    .get(SoulissBindingConstants.CONFIG_TIMEOUT_TO_REQUEUE)).intValue();
-            logger.debug("Get send timeout to requeue: {}", sendTimeoutToRequeue);
-        }
-
-        if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_TIMEOUT_TO_REMOVE_PACKET) != null) {
-            sendTimeoutToRequeue = ((BigDecimal) gwConfigurationMap
-                    .get(SoulissBindingConstants.CONFIG_TIMEOUT_TO_REMOVE_PACKET)).intValue();
-            logger.debug("Get send timeout to requeue: {}", sendTimeoutToRequeue);
-        }
-
-        // START SERVER ON DEFAULT PORT - Used for topics
-        if (UDP_Server_DefaultPort_RunnableClass == null) {
-            logger.debug("Starting UDP server on Souliss Default Port for Topics (Publish&Subcribe)");
-            datagramSocket_defaultPort = SoulissDatagramSocketFactory.getSocketDatagram(souliss_gateway_port);
-            if (datagramSocket_defaultPort != null) {
-                UDP_Server_DefaultPort_RunnableClass = new SoulissBindingUDPServerJob(datagramSocket_defaultPort,
-                        SoulissBindingNetworkParameters.discoverResult);
-                UDPserverJob_DefaultPort = scheduler.scheduleAtFixedRate(UDP_Server_DefaultPort_RunnableClass, 100,
-                        SoulissBindingConstants.SERVER_CICLE_IN_MILLIS, TimeUnit.MILLISECONDS);
+            if (preferred_local_port < 0 && preferred_local_port > 65000) {
+                bridge.getConfiguration().put(SoulissBindingConstants.CONFIG_LOCAL_PORT, 0);
+                logger.debug("Set Preferred Local Port to {}", 0);
             }
+
+            if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_PORT) != null) {
+                souliss_gateway_port = ((BigDecimal) gwConfigurationMap.get(SoulissBindingConstants.CONFIG_PORT))
+                        .intValue();
+                logger.debug("Get Souliss Gateway Port: {}", souliss_gateway_port);
+            }
+            if (souliss_gateway_port < 0 && souliss_gateway_port > 65000)
+
+            {
+                bridge.getConfiguration().put(SoulissBindingConstants.CONFIG_PORT,
+                        SoulissBindingUDPConstants.SOULISS_GATEWAY_DEFAULT_PORT);
+                logger.debug("Set Souliss Gateway Port to {}", SoulissBindingUDPConstants.SOULISS_GATEWAY_DEFAULT_PORT);
+            }
+
+            if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_USER_INDEX) != null)
+
+            {
+                userIndex = ((BigDecimal) gwConfigurationMap.get(SoulissBindingConstants.CONFIG_USER_INDEX))
+                        .byteValue();
+                logger.debug("Get User Index: {}", userIndex);
+                if (userIndex < 0 && userIndex > 255) {
+                    bridge.getConfiguration().put(SoulissBindingConstants.CONFIG_USER_INDEX,
+                            SoulissBindingUDPConstants.SOULISS_DEFAULT_USER_INDEX);
+                    logger.debug("Set User Index to {}", SoulissBindingUDPConstants.SOULISS_DEFAULT_USER_INDEX);
+                }
+            }
+
+            if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_NODE_INDEX) != null) {
+                nodeIndex = ((BigDecimal) gwConfigurationMap.get(SoulissBindingConstants.CONFIG_NODE_INDEX))
+                        .byteValue();
+                logger.debug("Get Node Index: {}", nodeIndex);
+            }
+            if (nodeIndex < 0 && nodeIndex > 255) {
+                bridge.getConfiguration().put(SoulissBindingConstants.CONFIG_NODE_INDEX,
+                        SoulissBindingUDPConstants.SOULISS_DEFAULT_NODE_INDEX);
+                logger.debug("Set Node Index to {}", SoulissBindingUDPConstants.SOULISS_DEFAULT_NODE_INDEX);
+            }
+
+            if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_NODE_INDEX) != null) {
+                nodeIndex = ((BigDecimal) gwConfigurationMap.get(SoulissBindingConstants.CONFIG_NODE_INDEX))
+                        .byteValue();
+                logger.debug("Get Node Index: {}", nodeIndex);
+            }
+
+            if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_PING_REFRESH) != null) {
+                pingRefreshInterval = ((BigDecimal) gwConfigurationMap.get(SoulissBindingConstants.CONFIG_PING_REFRESH))
+                        .intValue();
+                logger.debug("Get ping refresh interval: {}", pingRefreshInterval);
+            }
+            if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_SUBSCRIPTION_REFRESH) != null) {
+                subscriptionRefreshInterval = ((BigDecimal) gwConfigurationMap
+                        .get(SoulissBindingConstants.CONFIG_SUBSCRIPTION_REFRESH)).intValue();
+                logger.debug("Get ping refresh interval: {}", pingRefreshInterval);
+            }
+            if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_HEALTHY_REFRESH) != null) {
+                healthRefreshInterval = ((BigDecimal) gwConfigurationMap
+                        .get(SoulissBindingConstants.CONFIG_HEALTHY_REFRESH)).intValue();
+                logger.debug("Get health refresh interval: {}", healthRefreshInterval);
+            }
+
+            if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_SEND_REFRESH) != null) {
+                sendRefreshInterval = ((BigDecimal) gwConfigurationMap.get(SoulissBindingConstants.CONFIG_SEND_REFRESH))
+                        .intValue();
+                logger.debug("Get send refresh interval: {}", sendRefreshInterval);
+            }
+
+            if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_TIMEOUT_TO_REQUEUE) != null) {
+                sendTimeoutToRequeue = ((BigDecimal) gwConfigurationMap
+                        .get(SoulissBindingConstants.CONFIG_TIMEOUT_TO_REQUEUE)).intValue();
+                logger.debug("Get send timeout to requeue: {}", sendTimeoutToRequeue);
+            }
+
+            if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_TIMEOUT_TO_REMOVE_PACKET) != null) {
+                sendTimeoutToRequeue = ((BigDecimal) gwConfigurationMap
+                        .get(SoulissBindingConstants.CONFIG_TIMEOUT_TO_REMOVE_PACKET)).intValue();
+                logger.debug("Get send timeout to requeue: {}", sendTimeoutToRequeue);
+            }
+
+            // START SERVER ON DEFAULT PORT - Used for topics
+            if (UDP_Server_DefaultPort_RunnableClass == null) {
+                logger.debug("Starting UDP server on Souliss Default Port for Topics (Publish&Subcribe)");
+                datagramSocket_defaultPort = SoulissDatagramSocketFactory.getSocketDatagram(souliss_gateway_port);
+                if (datagramSocket_defaultPort != null) {
+                    UDP_Server_DefaultPort_RunnableClass = new SoulissBindingUDPServerJob(datagramSocket_defaultPort,
+                            SoulissBindingNetworkParameters.discoverResult);
+                    scheduler.scheduleAtFixedRate(UDP_Server_DefaultPort_RunnableClass, 100,
+                            SoulissBindingConstants.SERVER_CICLE_IN_MILLIS, TimeUnit.MILLISECONDS);
+                }
+            }
+
+            // START JOB PING
+
+            SoulissGatewayJobPing soulissGatewayJobPingRunnable = new SoulissGatewayJobPing(bridge);
+            scheduler.scheduleAtFixedRate(soulissGatewayJobPingRunnable, 2,
+                    soulissGatewayJobPingRunnable.get_pingRefreshInterval(), TimeUnit.SECONDS);
+
+            SoulissGatewayJobSubscription soulissGatewayJobSubscriptionRunnable = new SoulissGatewayJobSubscription(
+                    bridge);
+            scheduler.scheduleAtFixedRate(soulissGatewayJobSubscriptionRunnable, 0,
+                    soulissGatewayJobSubscriptionRunnable.get_subscriptionRefreshInterval(), TimeUnit.MINUTES);
+
+            SoulissGatewayJobHealty soulissGatewayJobHealtyRunnable = new SoulissGatewayJobHealty(bridge);
+            scheduler.scheduleAtFixedRate(soulissGatewayJobHealtyRunnable, 5,
+                    soulissGatewayJobHealtyRunnable.get_healthRefreshInterval(), TimeUnit.SECONDS);
+
+            // il ciclo Send è schedulato con la costante
+            // SoulissBindingConstants.SEND_DISPATCHER_MIN_DELAY_cicleInMillis
+            // internamente il ciclo viene rallentato al timer impostato da configurazione (PaperUI o File)
+            SoulissBindingSendDispatcherJob SoulissSendDispatcherRunnable = new SoulissBindingSendDispatcherJob(bridge);
+            scheduler.scheduleWithFixedDelay(SoulissSendDispatcherRunnable, 15,
+                    SoulissBindingConstants.SEND_DISPATCHER_MIN_DELAY_cicleInMillis, TimeUnit.MILLISECONDS);
         }
-
-        // START JOB PING
-
-        SoulissGatewayJobPing soulissGatewayJobPingRunnable = new SoulissGatewayJobPing(bridge);
-        scheduler.scheduleAtFixedRate(soulissGatewayJobPingRunnable, 2,
-                soulissGatewayJobPingRunnable.get_pingRefreshInterval(), TimeUnit.SECONDS);
-
-        SoulissGatewayJobSubscription soulissGatewayJobSubscriptionRunnable = new SoulissGatewayJobSubscription(bridge);
-        scheduler.scheduleAtFixedRate(soulissGatewayJobSubscriptionRunnable, 0,
-                soulissGatewayJobSubscriptionRunnable.get_subscriptionRefreshInterval(), TimeUnit.MINUTES);
-
-        SoulissGatewayJobHealty soulissGatewayJobHealtyRunnable = new SoulissGatewayJobHealty(bridge);
-        scheduler.scheduleAtFixedRate(soulissGatewayJobHealtyRunnable, 5,
-                soulissGatewayJobHealtyRunnable.get_healthRefreshInterval(), TimeUnit.SECONDS);
-
-        // il ciclo Send è schedulato con la costante SoulissBindingConstants.SEND_DISPATCHER_MIN_DELAY_cicleInMillis
-        // internamente il ciclo viene rallentato al timer impostato da configurazione (PaperUI o File)
-        SoulissBindingSendDispatcherJob SoulissSendDispatcherRunnable = new SoulissBindingSendDispatcherJob(bridge);
-        scheduler.scheduleWithFixedDelay(SoulissSendDispatcherRunnable, 15,
-                SoulissBindingConstants.SEND_DISPATCHER_MIN_DELAY_cicleInMillis, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -273,17 +279,17 @@ public class SoulissGatewayHandler extends BaseBridgeHandler {
         return maxNode + 1;
     }
 
-    public void setMaxnodes(int maxnodes) {
-        this.maxnodes = maxnodes;
-    }
+    // public void setMaxnodes(int maxnodes) {
+    // this.maxnodes = maxnodes;
+    // }
 
     public void setMaxTypicalXnode(int maxTypicalXnode) {
         this.maxTypicalXnode = maxTypicalXnode;
     }
 
-    public void setMaxrequests(int maxrequests) {
-        this.maxrequests = maxrequests;
-    }
+    // public void setMaxrequests(int maxrequests) {
+    // this.maxrequests = maxrequests;
+    // }
 
     public int getMaxTypicalXnode() {
         return maxTypicalXnode;
@@ -319,7 +325,7 @@ public class SoulissGatewayHandler extends BaseBridgeHandler {
 
     public void sendSubscription() {
         // logger.debug("Sending subscription packet");
-        if (IPAddressOnLAN.length() > 0) {
+        if (IPAddressOnLAN != null && IPAddressOnLAN.length() > 0) {
             SoulissCommonCommands.sendSUBSCRIPTIONframe(SoulissBindingNetworkParameters.getDatagramSocket(),
                     IPAddressOnLAN, nodeIndex, userIndex, getNodes());
         }

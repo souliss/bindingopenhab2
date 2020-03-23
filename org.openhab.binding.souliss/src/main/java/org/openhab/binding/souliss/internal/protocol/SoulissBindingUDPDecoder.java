@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.smarthome.core.library.types.DecimalType;
-import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.library.types.StringType;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
@@ -329,17 +328,17 @@ public class SoulissBindingUDPDecoder {
     private void decodeDBStructRequest(byte lastByteGatewayIP, ArrayList<Byte> mac) {
         try {
             int nodes = mac.get(5);
-            int maxnodes = mac.get(6);
+            // int maxnodes = mac.get(6);
             int maxTypicalXnode = mac.get(7);
-            int maxrequests = mac.get(8);
+            // int maxrequests = mac.get(8);
 
             SoulissGatewayHandler gateway = (SoulissGatewayHandler) SoulissBindingNetworkParameters
                     .getGateway(lastByteGatewayIP).getHandler();
             if (gateway != null) {
                 gateway.setNodes(nodes);
-                gateway.setMaxnodes(maxnodes);
+                // gateway.setMaxnodes(maxnodes);
                 gateway.setMaxTypicalXnode(maxTypicalXnode);
-                gateway.setMaxrequests(maxrequests);
+                // gateway.setMaxrequests(maxrequests);
 
                 // db Struct Answer from lastByteGatewayIP
                 gateway.dbStructAnswerReceived();
@@ -399,14 +398,14 @@ public class SoulissBindingUDPDecoder {
         } catch (Exception ex) {
         }
 
-        Iterator thingsIterator;
+        Iterator<Thing> thingsIterator;
         if (gateway != null && gateway.IPAddressOnLAN != null
                 && ((byte) Integer.parseInt(gateway.IPAddressOnLAN.split("\\.")[3])) == lastByteGatewayIP) {
             thingsIterator = gateway.getThing().getThings().iterator();
             boolean bFound = false;
             Thing typ = null;
             while (thingsIterator.hasNext() && !bFound) {
-                typ = (Thing) thingsIterator.next();
+                typ = thingsIterator.next();
                 String sUID_Array[] = typ.getUID().getAsString().split(":");
                 ThingHandler handler = typ.getHandler();
                 if (handler != null) { // execute it only if binding is Souliss and update is for my
@@ -423,7 +422,6 @@ public class SoulissBindingUDPDecoder {
                             int slot = ((SoulissGenericHandler) handler).getSlot();
                             // get typical value
                             byte sVal = getByteAtSlot(mac, slot);
-                            OnOffType typicalState = null;
                             // update Txx
                             switch (sUID_Array[1]) {
                                 case SoulissBindingConstants.T11:

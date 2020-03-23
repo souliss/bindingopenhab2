@@ -164,11 +164,13 @@ public abstract class SoulissGenericHandler extends BaseThingHandler implements 
         return thing.getLabel();
     }
 
+    @SuppressWarnings("null")
     public byte getGatewayUserIndex() {
         if (getBridge() != null) {
             return ((SoulissGatewayHandler) getBridge().getHandler()).userIndex;
         }
         return 0;
+
     }
 
     @SuppressWarnings("null")

@@ -22,8 +22,6 @@ import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.PrimitiveType;
 import org.eclipse.smarthome.core.types.RefreshType;
 import org.openhab.binding.souliss.SoulissBindingConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The {@link SoulissT13Handler} is responsible for handling commands, which are
@@ -33,7 +31,6 @@ import org.slf4j.LoggerFactory;
  */
 public class SoulissT13Handler extends SoulissGenericHandler {
 
-    private Logger logger = LoggerFactory.getLogger(SoulissT13Handler.class);
     Configuration gwConfigurationMap;
     byte T1nRawState;
 
