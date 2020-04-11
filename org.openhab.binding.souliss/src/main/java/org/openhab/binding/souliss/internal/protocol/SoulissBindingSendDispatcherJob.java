@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SoulissBindingSendDispatcherJob implements Runnable {
 
-    private static Logger logger = LoggerFactory.getLogger(SoulissGatewayJobHealty.class);
+    private static Logger logger = LoggerFactory.getLogger(SoulissBindingSendDispatcherJob.class);
 
     private SoulissGatewayHandler gw;
     static boolean bPopSuspend = false;
@@ -155,12 +155,9 @@ public class SoulissBindingSendDispatcherJob implements Runnable {
 
                 resetTime();
             }
-        } catch (IOException e) {
-            logger.warn(e.getMessage());
         } catch (Exception e) {
-            logger.warn(e.getMessage());
+            logger.warn(e.getMessage(),e);
         }
-
     }
 
     /**
@@ -213,7 +210,12 @@ public class SoulissBindingSendDispatcherJob implements Runnable {
                     if (packetsList.get(i).packet.getData()[j] != 0) {
                         // recupero tipico dalla memoria
                         typ = getHandler(_iPAddressOnLAN, node, iSlot);
-                        bExpected = typ.getExpectedRawState(packetsList.get(i).packet.getData()[j]);
+
+                        if ( typ != null ) {
+                            bExpected = typ.getExpectedRawState(packetsList.get(i).packet.getData()[j]);
+                        } else {
+                            bExpected = -1;
+                        }
 
                         // se il valore atteso dal tipico è -1 allora vuol dire che il tipico non supporta la
                         // funzione
