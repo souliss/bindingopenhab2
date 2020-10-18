@@ -15,8 +15,8 @@ package org.openhab.binding.souliss.internal.protocol;
 import java.net.DatagramSocket;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.eclipse.smarthome.core.thing.Bridge;
-import org.eclipse.smarthome.core.thing.Thing;
+import org.openhab.core.thing.Bridge;
+import org.openhab.core.thing.Thing;
 import org.openhab.binding.souliss.internal.discovery.SoulissDiscoverJob.DiscoverResult;
 
 /**

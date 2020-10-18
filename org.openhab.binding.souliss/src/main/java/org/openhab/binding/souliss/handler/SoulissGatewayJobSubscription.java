@@ -12,7 +12,7 @@
  */
 package org.openhab.binding.souliss.handler;
 
-import org.eclipse.smarthome.core.thing.Bridge;
+import org.openhab.core.thing.Bridge;
 
 /**
  * @author Tonino Fazio - Initial contribution

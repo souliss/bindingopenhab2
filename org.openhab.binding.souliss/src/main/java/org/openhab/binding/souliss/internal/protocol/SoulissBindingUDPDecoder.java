@@ -21,10 +21,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.eclipse.smarthome.core.library.types.DecimalType;
-import org.eclipse.smarthome.core.library.types.StringType;
-import org.eclipse.smarthome.core.thing.Thing;
-import org.eclipse.smarthome.core.thing.binding.ThingHandler;
+import org.openhab.core.library.types.DecimalType;
+import org.openhab.core.library.types.StringType;
+import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.binding.ThingHandler;
 import org.openhab.binding.souliss.SoulissBindingConstants;
 import org.openhab.binding.souliss.SoulissBindingProtocolConstants;
 import org.openhab.binding.souliss.SoulissBindingUDPConstants;

@@ -12,7 +12,7 @@
  */
 package org.openhab.binding.souliss.handler;
 
-import org.eclipse.smarthome.core.thing.Thing;
+import org.openhab.core.thing.Thing;
 
 /**
  * The {@link SoulissT57Handler} is responsible for handling commands, which are

@@ -18,9 +18,9 @@ import java.net.SocketException;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.eclipse.smarthome.core.thing.Bridge;
-import org.eclipse.smarthome.core.thing.Thing;
-import org.eclipse.smarthome.core.thing.ThingUID;
+import org.openhab.core.thing.Bridge;
+import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.ThingUID;
 import org.openhab.binding.souliss.handler.SoulissGatewayHandler;
 import org.openhab.binding.souliss.internal.protocol.SoulissBindingNetworkParameters;
 import org.openhab.binding.souliss.internal.protocol.SoulissBindingUDPServerJob;
