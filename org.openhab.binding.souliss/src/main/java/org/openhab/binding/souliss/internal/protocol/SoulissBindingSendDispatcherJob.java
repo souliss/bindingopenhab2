@@ -8,7 +8,6 @@
  */
 package org.openhab.binding.souliss.internal.protocol;
 
-import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.util.ArrayList;
@@ -17,7 +16,6 @@ import java.util.Iterator;
 import org.openhab.binding.souliss.SoulissBindingConstants;
 import org.openhab.binding.souliss.SoulissBindingUDPConstants;
 import org.openhab.binding.souliss.handler.SoulissGatewayHandler;
-import org.openhab.binding.souliss.handler.SoulissGatewayJobHealty;
 import org.openhab.binding.souliss.handler.SoulissGenericHandler;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.Thing;
@@ -156,7 +154,7 @@ public class SoulissBindingSendDispatcherJob implements Runnable {
                 resetTime();
             }
         } catch (Exception e) {
-            logger.warn(e.getMessage(),e);
+            logger.warn(e.getMessage(), e);
         }
     }
 
@@ -211,7 +209,7 @@ public class SoulissBindingSendDispatcherJob implements Runnable {
                         // recupero tipico dalla memoria
                         typ = getHandler(_iPAddressOnLAN, node, iSlot);
 
-                        if ( typ != null ) {
+                        if (typ != null) {
                             bExpected = typ.getExpectedRawState(packetsList.get(i).packet.getData()[j]);
                         } else {
                             bExpected = -1;
