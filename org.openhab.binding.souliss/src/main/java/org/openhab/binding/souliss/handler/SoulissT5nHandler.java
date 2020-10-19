@@ -13,13 +13,13 @@
 package org.openhab.binding.souliss.handler;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.openhab.binding.souliss.SoulissBindingConstants;
 import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.PrimitiveType;
-import org.openhab.binding.souliss.SoulissBindingConstants;
 
 /**
  * The {@link SoulissT5nHandler} is responsible for handling commands, which are

@@ -12,6 +12,7 @@
  */
 package org.openhab.binding.souliss.handler;
 
+import org.openhab.binding.souliss.SoulissBindingConstants;
 import org.openhab.core.config.core.Configuration;
 import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.library.types.OpenClosedType;
@@ -21,7 +22,6 @@ import org.openhab.core.thing.ThingStatus;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.PrimitiveType;
 import org.openhab.core.types.RefreshType;
-import org.openhab.binding.souliss.SoulissBindingConstants;
 
 /**
  * The {@link SoulissT13Handler} is responsible for handling commands, which are
@@ -41,7 +41,6 @@ public class SoulissT13Handler extends SoulissGenericHandler {
     @Override
     public void initialize() {
         updateStatus(ThingStatus.ONLINE);
-
     }
 
     public void setState(PrimitiveType _state) {

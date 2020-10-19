@@ -14,6 +14,9 @@
 package org.openhab.binding.souliss.handler;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.openhab.binding.souliss.SoulissBindingConstants;
+import org.openhab.binding.souliss.SoulissBindingProtocolConstants;
+import org.openhab.binding.souliss.internal.HalfFloatUtils;
 import org.openhab.core.config.core.Configuration;
 import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.OnOffType;
@@ -24,9 +27,6 @@ import org.openhab.core.thing.ThingStatus;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.PrimitiveType;
 import org.openhab.core.types.RefreshType;
-import org.openhab.binding.souliss.SoulissBindingConstants;
-import org.openhab.binding.souliss.SoulissBindingProtocolConstants;
-import org.openhab.binding.souliss.internal.HalfFloatUtils;
 
 /**
  * The {@link SoulissT31Handler} is responsible for handling commands, which are
@@ -199,7 +199,6 @@ public class SoulissT31Handler extends SoulissGenericHandler {
                 _setMeasuredValue = valueOf;
             }
         }
-
     }
 
     public void setSetpointValue(DecimalType valueOf) {
@@ -209,7 +208,6 @@ public class SoulissT31Handler extends SoulissGenericHandler {
                 _setPointValue = valueOf;
             }
         }
-
     }
 
     String sMessage = "";
@@ -275,7 +273,6 @@ public class SoulissT31Handler extends SoulissGenericHandler {
         if (!Float.isNaN(_valSetPoint)) {
             this.setSetpointValue(DecimalType.valueOf(String.valueOf(_valSetPoint)));
         }
-
     }
 
     @Override
@@ -304,5 +301,4 @@ public class SoulissT31Handler extends SoulissGenericHandler {
     public void setRawState(byte _rawState) {
         throw new NotImplementedException();
     }
-
 }

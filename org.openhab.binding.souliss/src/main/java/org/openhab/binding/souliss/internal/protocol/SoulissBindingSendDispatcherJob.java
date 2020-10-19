@@ -14,13 +14,13 @@ import java.net.DatagramSocket;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.openhab.core.thing.Bridge;
-import org.openhab.core.thing.Thing;
 import org.openhab.binding.souliss.SoulissBindingConstants;
 import org.openhab.binding.souliss.SoulissBindingUDPConstants;
 import org.openhab.binding.souliss.handler.SoulissGatewayHandler;
 import org.openhab.binding.souliss.handler.SoulissGatewayJobHealty;
 import org.openhab.binding.souliss.handler.SoulissGenericHandler;
+import org.openhab.core.thing.Bridge;
+import org.openhab.core.thing.Thing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -160,7 +160,6 @@ public class SoulissBindingSendDispatcherJob implements Runnable {
         } catch (Exception e) {
             logger.warn(e.getMessage());
         }
-
     }
 
     /**

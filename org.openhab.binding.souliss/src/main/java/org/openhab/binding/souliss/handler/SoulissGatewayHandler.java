@@ -19,6 +19,13 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.openhab.binding.souliss.SoulissBindingConstants;
+import org.openhab.binding.souliss.SoulissBindingUDPConstants;
+import org.openhab.binding.souliss.internal.SoulissDatagramSocketFactory;
+import org.openhab.binding.souliss.internal.protocol.SoulissBindingNetworkParameters;
+import org.openhab.binding.souliss.internal.protocol.SoulissBindingSendDispatcherJob;
+import org.openhab.binding.souliss.internal.protocol.SoulissBindingUDPServerJob;
+import org.openhab.binding.souliss.internal.protocol.SoulissCommonCommands;
 import org.openhab.core.config.core.Configuration;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.ChannelUID;
@@ -27,13 +34,6 @@ import org.openhab.core.thing.ThingStatus;
 import org.openhab.core.thing.ThingStatusDetail;
 import org.openhab.core.thing.binding.BaseBridgeHandler;
 import org.openhab.core.types.Command;
-import org.openhab.binding.souliss.SoulissBindingConstants;
-import org.openhab.binding.souliss.SoulissBindingUDPConstants;
-import org.openhab.binding.souliss.internal.SoulissDatagramSocketFactory;
-import org.openhab.binding.souliss.internal.protocol.SoulissBindingNetworkParameters;
-import org.openhab.binding.souliss.internal.protocol.SoulissBindingSendDispatcherJob;
-import org.openhab.binding.souliss.internal.protocol.SoulissBindingUDPServerJob;
-import org.openhab.binding.souliss.internal.protocol.SoulissCommonCommands;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

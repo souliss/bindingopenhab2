@@ -12,9 +12,9 @@
  */
 package org.openhab.binding.souliss.handler;
 
-import org.openhab.core.thing.Bridge;
 import org.openhab.binding.souliss.internal.protocol.SoulissBindingNetworkParameters;
 import org.openhab.binding.souliss.internal.protocol.SoulissCommonCommands;
+import org.openhab.core.thing.Bridge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,5 +61,4 @@ public class SoulissGatewayJobPing extends Thread {
     public void set_pingRefreshInterval(int _pingRefreshInterval) {
         this._pingRefreshInterval = _pingRefreshInterval;
     }
-
 }

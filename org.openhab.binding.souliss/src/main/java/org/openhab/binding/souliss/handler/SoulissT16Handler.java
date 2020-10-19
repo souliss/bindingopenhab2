@@ -15,6 +15,8 @@ package org.openhab.binding.souliss.handler;
 import java.math.BigDecimal;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.openhab.binding.souliss.SoulissBindingConstants;
+import org.openhab.binding.souliss.SoulissBindingProtocolConstants;
 import org.openhab.core.config.core.Configuration;
 import org.openhab.core.library.types.HSBType;
 import org.openhab.core.library.types.OnOffType;
@@ -26,8 +28,6 @@ import org.openhab.core.thing.ThingStatus;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.PrimitiveType;
 import org.openhab.core.types.RefreshType;
-import org.openhab.binding.souliss.SoulissBindingConstants;
-import org.openhab.binding.souliss.SoulissBindingProtocolConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -147,7 +147,6 @@ public class SoulissT16Handler extends SoulissGenericHandler {
 
             }
         }
-
     }
 
     @Override

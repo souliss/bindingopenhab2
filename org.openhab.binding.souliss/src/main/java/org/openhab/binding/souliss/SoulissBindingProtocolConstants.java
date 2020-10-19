@@ -293,5 +293,4 @@ public class SoulissBindingProtocolConstants {
 
     public static final byte Souliss_T_HumiditySensor = 0x69;
     public static final byte Souliss_T_HumiditySensor_refresh = 0x03;
-
 }

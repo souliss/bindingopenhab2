@@ -13,6 +13,8 @@
 
 package org.openhab.binding.souliss.handler;
 
+import org.openhab.binding.souliss.SoulissBindingConstants;
+import org.openhab.binding.souliss.SoulissBindingProtocolConstants;
 import org.openhab.core.config.core.Configuration;
 import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.library.types.StringType;
@@ -22,8 +24,6 @@ import org.openhab.core.thing.ThingStatus;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.PrimitiveType;
 import org.openhab.core.types.RefreshType;
-import org.openhab.binding.souliss.SoulissBindingConstants;
-import org.openhab.binding.souliss.SoulissBindingProtocolConstants;
 
 /**
  * The {@link SoulissT41Handler} is responsible for handling commands, which are
@@ -82,7 +82,6 @@ public class SoulissT41Handler extends SoulissGenericHandler {
         if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_SECURE_SEND) != null) {
             bSecureSend = ((Boolean) gwConfigurationMap.get(SoulissBindingConstants.CONFIG_SECURE_SEND)).booleanValue();
         }
-
     }
 
     public void setState(PrimitiveType _state) {

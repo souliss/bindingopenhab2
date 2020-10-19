@@ -16,6 +16,7 @@ import java.net.DatagramSocket;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.openhab.binding.souliss.SoulissBindingConstants;
 import org.openhab.core.library.types.DateTimeType;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
@@ -23,7 +24,6 @@ import org.openhab.core.thing.ThingStatusDetail;
 import org.openhab.core.thing.ThingStatusInfo;
 import org.openhab.core.thing.binding.BaseThingHandler;
 import org.openhab.core.types.PrimitiveType;
-import org.openhab.binding.souliss.SoulissBindingConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

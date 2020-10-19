@@ -21,11 +21,6 @@ import java.util.TreeMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.openhab.core.config.discovery.AbstractDiscoveryService;
-import org.openhab.core.config.discovery.DiscoveryResult;
-import org.openhab.core.config.discovery.DiscoveryResultBuilder;
-import org.openhab.core.config.discovery.DiscoveryService;
-import org.openhab.core.thing.ThingUID;
 import org.openhab.binding.souliss.SoulissBindingConstants;
 import org.openhab.binding.souliss.SoulissBindingProtocolConstants;
 import org.openhab.binding.souliss.handler.SoulissGatewayHandler;
@@ -33,6 +28,11 @@ import org.openhab.binding.souliss.internal.SoulissDatagramSocketFactory;
 import org.openhab.binding.souliss.internal.discovery.SoulissDiscoverJob.DiscoverResult;
 import org.openhab.binding.souliss.internal.protocol.SoulissBindingNetworkParameters;
 import org.openhab.binding.souliss.internal.protocol.SoulissBindingUDPServerJob;
+import org.openhab.core.config.discovery.AbstractDiscoveryService;
+import org.openhab.core.config.discovery.DiscoveryResult;
+import org.openhab.core.config.discovery.DiscoveryResultBuilder;
+import org.openhab.core.config.discovery.DiscoveryService;
+import org.openhab.core.thing.ThingUID;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.Version;
 import org.osgi.service.component.annotations.Component;
@@ -104,7 +104,6 @@ public class SoulissGatewayDiscovery extends AbstractDiscoveryService implements
         // backgroundFuture.cancel(false);
         // backgroundFuture = null;
         // }
-
     }
 
     /**
@@ -148,7 +147,6 @@ public class SoulissGatewayDiscovery extends AbstractDiscoveryService implements
                     SoulissBindingConstants.DISCOVERY_RESEND_TIMEOUT_IN_MILLIS, TimeUnit.MILLISECONDS);
             logger.info("Start Discovery Job");
         }
-
     }
 
     @Override

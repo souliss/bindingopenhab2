@@ -25,5 +25,4 @@ public class SoulissT57Handler extends SoulissT5nHandler {
     public SoulissT57Handler(Thing thing) {
         super(thing);
     }
-
 }

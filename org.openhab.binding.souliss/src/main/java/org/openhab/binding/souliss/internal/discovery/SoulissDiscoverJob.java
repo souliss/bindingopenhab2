@@ -18,13 +18,13 @@ import java.net.SocketException;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.openhab.core.thing.Bridge;
-import org.openhab.core.thing.Thing;
-import org.openhab.core.thing.ThingUID;
 import org.openhab.binding.souliss.handler.SoulissGatewayHandler;
 import org.openhab.binding.souliss.internal.protocol.SoulissBindingNetworkParameters;
 import org.openhab.binding.souliss.internal.protocol.SoulissBindingUDPServerJob;
 import org.openhab.binding.souliss.internal.protocol.SoulissCommonCommands;
+import org.openhab.core.thing.Bridge;
+import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.ThingUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

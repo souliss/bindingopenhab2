@@ -12,9 +12,9 @@
  */
 package org.openhab.binding.souliss.handler;
 
-import org.openhab.core.thing.Bridge;
 import org.openhab.binding.souliss.internal.protocol.SoulissBindingNetworkParameters;
 import org.openhab.binding.souliss.internal.protocol.SoulissCommonCommands;
+import org.openhab.core.thing.Bridge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

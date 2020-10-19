@@ -16,6 +16,10 @@ import java.net.DatagramSocket;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.openhab.binding.souliss.SoulissBindingConstants;
+import org.openhab.binding.souliss.SoulissBindingProtocolConstants;
+import org.openhab.binding.souliss.internal.protocol.SoulissBindingNetworkParameters;
+import org.openhab.binding.souliss.internal.protocol.SoulissCommonCommands;
 import org.openhab.core.library.types.DateTimeType;
 import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.OnOffType;
@@ -26,10 +30,6 @@ import org.openhab.core.thing.ThingStatus;
 import org.openhab.core.thing.ThingStatusDetail;
 import org.openhab.core.thing.ThingStatusInfo;
 import org.openhab.core.thing.binding.BaseThingHandler;
-import org.openhab.binding.souliss.SoulissBindingConstants;
-import org.openhab.binding.souliss.SoulissBindingProtocolConstants;
-import org.openhab.binding.souliss.internal.protocol.SoulissBindingNetworkParameters;
-import org.openhab.binding.souliss.internal.protocol.SoulissCommonCommands;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -170,7 +170,6 @@ public abstract class SoulissGenericHandler extends BaseThingHandler implements 
             return ((SoulissGatewayHandler) getBridge().getHandler()).userIndex;
         }
         return 0;
-
     }
 
     @SuppressWarnings("null")
@@ -219,5 +218,4 @@ public abstract class SoulissGenericHandler extends BaseThingHandler implements 
         }
         return null;
     }
-
 }

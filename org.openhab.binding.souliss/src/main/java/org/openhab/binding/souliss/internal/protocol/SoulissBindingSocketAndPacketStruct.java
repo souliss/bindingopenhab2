@@ -50,5 +50,4 @@ public class SoulissBindingSocketAndPacketStruct {
     public void setSent(boolean sent) {
         this.sent = sent;
     }
-
 }
