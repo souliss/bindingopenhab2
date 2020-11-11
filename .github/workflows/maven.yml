@@ -22,6 +22,6 @@ jobs:
         java-version: 11.0.3
         settings-path: ${{ github.workspace }} 
     - name: Build with Maven
-      run: mvn -B package --file pom.xml --settings settings.xml
+      run: mvn clean install DskipChecks --file pom.xml --settings settings.xml
       working-directory: org.openhab.binding.souliss
 
