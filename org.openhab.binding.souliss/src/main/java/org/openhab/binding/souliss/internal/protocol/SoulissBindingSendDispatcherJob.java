@@ -153,8 +153,11 @@ public class SoulissBindingSendDispatcherJob implements Runnable {
 
                 resetTime();
             }
+        } catch (IOException e) {
+            logger.warn(e.getMessage());
         } catch (Exception e) {
-            logger.warn(e.getMessage(), e);
+            logger.warn(e.getMessage());
+            logger.warn(e.getMessage(),e);
         }
     }
 
@@ -209,7 +212,7 @@ public class SoulissBindingSendDispatcherJob implements Runnable {
                         // recupero tipico dalla memoria
                         typ = getHandler(_iPAddressOnLAN, node, iSlot);
 
-                        if (typ != null) {
+                        if ( typ != null ) {
                             bExpected = typ.getExpectedRawState(packetsList.get(i).packet.getData()[j]);
                         } else {
                             bExpected = -1;
