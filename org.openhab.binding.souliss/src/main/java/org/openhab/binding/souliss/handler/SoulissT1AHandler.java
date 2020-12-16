@@ -7,13 +7,13 @@
  */
 package org.openhab.binding.souliss.handler;
 
-import org.eclipse.smarthome.config.core.Configuration;
-import org.eclipse.smarthome.core.library.types.OpenClosedType;
-import org.eclipse.smarthome.core.thing.ChannelUID;
-import org.eclipse.smarthome.core.thing.Thing;
-import org.eclipse.smarthome.core.thing.ThingStatus;
-import org.eclipse.smarthome.core.types.Command;
 import org.openhab.binding.souliss.SoulissBindingConstants;
+import org.openhab.core.config.core.Configuration;
+import org.openhab.core.library.types.OpenClosedType;
+import org.openhab.core.thing.ChannelUID;
+import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.ThingStatus;
+import org.openhab.core.types.Command;
 
 /**
  * The {@link SoulissT1AHandler} is responsible for handling commands, which are
@@ -32,7 +32,6 @@ public class SoulissT1AHandler extends SoulissGenericHandler {
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
-
     }
 
     @Override

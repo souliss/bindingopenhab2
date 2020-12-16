@@ -14,18 +14,18 @@ package org.openhab.binding.souliss.handler;
 
 import java.math.BigDecimal;
 
-import org.eclipse.smarthome.config.core.Configuration;
-import org.eclipse.smarthome.core.library.types.OnOffType;
-import org.eclipse.smarthome.core.library.types.PercentType;
-import org.eclipse.smarthome.core.library.types.UpDownType;
-import org.eclipse.smarthome.core.thing.ChannelUID;
-import org.eclipse.smarthome.core.thing.Thing;
-import org.eclipse.smarthome.core.thing.ThingStatus;
-import org.eclipse.smarthome.core.types.Command;
-import org.eclipse.smarthome.core.types.PrimitiveType;
-import org.eclipse.smarthome.core.types.RefreshType;
 import org.openhab.binding.souliss.SoulissBindingConstants;
 import org.openhab.binding.souliss.SoulissBindingProtocolConstants;
+import org.openhab.core.config.core.Configuration;
+import org.openhab.core.library.types.OnOffType;
+import org.openhab.core.library.types.PercentType;
+import org.openhab.core.library.types.UpDownType;
+import org.openhab.core.thing.ChannelUID;
+import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.ThingStatus;
+import org.openhab.core.types.Command;
+import org.openhab.core.types.PrimitiveType;
+import org.openhab.core.types.RefreshType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,11 +53,14 @@ public class SoulissT19Handler extends SoulissGenericHandler {
         if (command instanceof RefreshType) {
             switch (channelUID.getId()) {
                 case SoulissBindingConstants.ONOFF_CHANNEL:
-                    logger.debug("T19, updateState refresh ONOFF to {} raw {}", getOHState_OnOff_FromSoulissVal(T1nRawState_byte0),T1nRawState_byte0);
+                    logger.debug("T19, updateState refresh ONOFF to {} raw {}",
+                            getOHState_OnOff_FromSoulissVal(T1nRawState_byte0), T1nRawState_byte0);
                     updateState(channelUID, getOHState_OnOff_FromSoulissVal(T1nRawState_byte0));
                     break;
                 case SoulissBindingConstants.DIMMER_BRIGHTNESS_CHANNEL:
-                    logger.debug("T19, updateState refresh BIGHTNESS to {} absolute {} raw {}", PercentType.valueOf(String.valueOf((T1nRawStateBrigthness_byte1 / 255) * 100)), String.valueOf((T1nRawStateBrigthness_byte1 / 255) * 100),T1nRawStateBrigthness_byte1);
+                    logger.debug("T19, updateState refresh BIGHTNESS to {} absolute {} raw {}",
+                            PercentType.valueOf(String.valueOf((T1nRawStateBrigthness_byte1 / 255) * 100)),
+                            String.valueOf((T1nRawStateBrigthness_byte1 / 255) * 100), T1nRawStateBrigthness_byte1);
                     updateState(SoulissBindingConstants.DIMMER_BRIGHTNESS_CHANNEL,
                             PercentType.valueOf(String.valueOf((T1nRawStateBrigthness_byte1 / 255) * 100)));
                     break;
@@ -83,7 +86,9 @@ public class SoulissT19Handler extends SoulissGenericHandler {
                         updateState(SoulissBindingConstants.DIMMER_BRIGHTNESS_CHANNEL, (PercentType) command);
                         // updateState(SoulissBindingConstants.DIMMER_BRIGHTNESS_CHANNEL,
                         /// PercentType.valueOf(hsbState.getBrightness().toString()));
-                        logger.debug("T19, commandSend BIGHTNESS to {} short value {} raw command {} ", (byte) (((PercentType) command).shortValue() * 255.00 / 100.00) ,((PercentType) command).shortValue(),command);
+                        logger.debug("T19, commandSend BIGHTNESS to {} short value {} raw command {} ",
+                                (byte) (((PercentType) command).shortValue() * 255.00 / 100.00),
+                                ((PercentType) command).shortValue(), command);
                         commandSEND(SoulissBindingProtocolConstants.Souliss_T1n_Set,
                                 (byte) (((PercentType) command).shortValue() * 255.00 / 100.00));
                         // Short.parseShort(String.valueOf(Math.round((dimmerValue / 255.00) * 100)))
@@ -112,7 +117,7 @@ public class SoulissT19Handler extends SoulissGenericHandler {
                     break;
                 case SoulissBindingConstants.SLEEP_CHANNEL:
                     if (command instanceof OnOffType) {
-                        logger.debug("T19, commandSend 2 SLEEP sleepTime: {}",xSleepTime);
+                        logger.debug("T19, commandSend 2 SLEEP sleepTime: {}", xSleepTime);
                         commandSEND((byte) (SoulissBindingProtocolConstants.Souliss_T1n_Timed + xSleepTime));
                     }
                     break;
@@ -148,16 +153,20 @@ public class SoulissT19Handler extends SoulissGenericHandler {
     public void setRawStateDimmerValue(byte _dimmerValue) {
         try {
             if (_dimmerValue != T1nRawState_byte0) {
-                logger.debug("T19 -- setting dimmer to dimmerValue {},short {}, T1nRawState_byte0 {}, calculated: {}, calculated no round: {}", _dimmerValue, _dimmerValue & 0xFF, T1nRawState_byte0,String.valueOf(Math.round(((_dimmerValue& 0xFF) * 100.0) / 255.0)),((_dimmerValue& 0xFF) * 100.0) / 255.0);
+                logger.debug(
+                        "T19 -- setting dimmer to dimmerValue {},short {}, T1nRawState_byte0 {}, calculated: {}, calculated no round: {}",
+                        _dimmerValue, _dimmerValue & 0xFF, T1nRawState_byte0,
+                        String.valueOf(Math.round(((_dimmerValue & 0xFF) * 100.0) / 255.0)),
+                        ((_dimmerValue & 0xFF) * 100.0) / 255.0);
                 updateState(SoulissBindingConstants.DIMMER_BRIGHTNESS_CHANNEL,
-                        PercentType.valueOf(String.valueOf(Math.round(((_dimmerValue& 0xFF)*100.0) / 255.0))));
+                        PercentType.valueOf(String.valueOf(Math.round(((_dimmerValue & 0xFF) * 100.0) / 255.0))));
 
             }
         } catch (IllegalStateException ex) {
             logger.debug("UUID: " + this.getThing().getUID().getAsString()
                     + " - Update state error (in setDimmerValue): " + ex.getMessage());
         } catch (java.lang.IllegalArgumentException ex) {
-            logger.warn("T19 Error setting state",ex);
+            logger.warn("T19 Error setting state", ex);
         }
     }
 

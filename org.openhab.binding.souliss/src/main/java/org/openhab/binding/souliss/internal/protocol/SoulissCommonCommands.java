@@ -97,7 +97,6 @@ public class SoulissCommonCommands {
         logger.debug("sendFORCEFrame - {}, soulissNodeIPAddressOnLAN: {}", MaCacoToString(MACACOframe),
                 soulissNodeIPAddressOnLAN);
         send(datagramSocket, MACACOframe, soulissNodeIPAddressOnLAN, nodeIndex, userIndex);
-
     }
 
     /*
@@ -160,7 +159,6 @@ public class SoulissCommonCommands {
         logger.debug("sendFORCEFrame - {}, soulissNodeIPAddressOnLAN: {}", MaCacoToString(MACACOframe),
                 soulissNodeIPAddressOnLAN);
         send(datagramSocket, MACACOframe, soulissNodeIPAddressOnLAN, nodeIndex, userIndex);
-
     }
 
     public static void sendDBStructFrame(DatagramSocket socket, String soulissNodeIPAddressOnLAN, byte nodeIndex,
@@ -185,7 +183,6 @@ public class SoulissCommonCommands {
         // MaCacoIN_s = mac.get(9);
         // MaCacoTyp_s = mac.get(10);
         // MaCacoOUT_s = mac.get(11);
-
     }
 
     /*
@@ -207,7 +204,6 @@ public class SoulissCommonCommands {
             logger.error("Error: ", e);
             logger.error(e.getMessage());
         }
-
     }
 
     /*
@@ -448,5 +444,4 @@ public class SoulissCommonCommands {
         flag = true;
         return sb.toString();
     }
-
 }

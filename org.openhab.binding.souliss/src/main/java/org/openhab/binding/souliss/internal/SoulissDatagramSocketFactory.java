@@ -52,6 +52,5 @@ public class SoulissDatagramSocketFactory {
         }
 
         return soulissDatagramSocket;
-
     }
 }

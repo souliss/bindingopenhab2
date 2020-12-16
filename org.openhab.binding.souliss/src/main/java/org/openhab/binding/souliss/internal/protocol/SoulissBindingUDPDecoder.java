@@ -21,10 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.eclipse.smarthome.core.library.types.DecimalType;
-import org.eclipse.smarthome.core.library.types.StringType;
-import org.eclipse.smarthome.core.thing.Thing;
-import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 import org.openhab.binding.souliss.SoulissBindingConstants;
 import org.openhab.binding.souliss.SoulissBindingProtocolConstants;
 import org.openhab.binding.souliss.SoulissBindingUDPConstants;
@@ -53,6 +49,10 @@ import org.openhab.binding.souliss.handler.SoulissT67Handler;
 import org.openhab.binding.souliss.handler.SoulissT68Handler;
 import org.openhab.binding.souliss.handler.SoulissTopicsHandler;
 import org.openhab.binding.souliss.internal.discovery.SoulissDiscoverJob.DiscoverResult;
+import org.openhab.core.library.types.DecimalType;
+import org.openhab.core.library.types.StringType;
+import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.binding.ThingHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -309,7 +309,6 @@ public class SoulissBindingUDPDecoder {
         } catch (Exception uy) {
             logger.error("decodeActionMessages ERROR");
         }
-
     }
 
     /**
@@ -580,7 +579,6 @@ public class SoulissBindingUDPDecoder {
 
     private byte getByteAtSlot(ArrayList<Byte> mac, int slot) {
         return mac.get(5 + slot);
-
     }
 
     private float getFloatAtSlot(ArrayList<Byte> mac, int slot) {
@@ -601,5 +599,4 @@ public class SoulissBindingUDPDecoder {
             return 1;
         }
     }
-
 }

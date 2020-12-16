@@ -12,7 +12,7 @@
  */
 package org.openhab.binding.souliss.handler;
 
-import org.eclipse.smarthome.core.thing.Thing;
+import org.openhab.core.thing.Thing;
 
 /**
  * The {@link SoulissT52Handler} is responsible for handling commands, which are
@@ -25,5 +25,4 @@ public class SoulissT52Handler extends SoulissT5nHandler {
     public SoulissT52Handler(Thing thing) {
         super(thing);
     }
-
 }

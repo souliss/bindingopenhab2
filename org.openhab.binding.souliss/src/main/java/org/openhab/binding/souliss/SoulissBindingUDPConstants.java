@@ -58,5 +58,4 @@ public class SoulissBindingUDPConstants {
     public static final Byte[] PING_DISCOVER_BCAST_PAYLOAD = { Souliss_UDP_function_discover_GW_node_bcast, 0, 0, 0,
             0 };
     public static final Byte[] DBSTRUCT_PAYLOAD = { Souliss_UDP_function_db_struct, 0, 0, 0, 0 };
-
 }

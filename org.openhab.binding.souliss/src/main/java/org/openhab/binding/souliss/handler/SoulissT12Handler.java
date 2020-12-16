@@ -14,16 +14,16 @@ package org.openhab.binding.souliss.handler;
 
 import java.math.BigDecimal;
 
-import org.eclipse.smarthome.config.core.Configuration;
-import org.eclipse.smarthome.core.library.types.OnOffType;
-import org.eclipse.smarthome.core.thing.ChannelUID;
-import org.eclipse.smarthome.core.thing.Thing;
-import org.eclipse.smarthome.core.thing.ThingStatus;
-import org.eclipse.smarthome.core.types.Command;
-import org.eclipse.smarthome.core.types.PrimitiveType;
-import org.eclipse.smarthome.core.types.RefreshType;
 import org.openhab.binding.souliss.SoulissBindingConstants;
 import org.openhab.binding.souliss.SoulissBindingProtocolConstants;
+import org.openhab.core.config.core.Configuration;
+import org.openhab.core.library.types.OnOffType;
+import org.openhab.core.thing.ChannelUID;
+import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.ThingStatus;
+import org.openhab.core.types.Command;
+import org.openhab.core.types.PrimitiveType;
+import org.openhab.core.types.RefreshType;
 
 /**
  * The {@link SoulissT12Handler} is responsible for handling commands, which are
@@ -61,7 +61,6 @@ public class SoulissT12Handler extends SoulissGenericHandler {
         if (gwConfigurationMap.get(SoulissBindingConstants.CONFIG_SECURE_SEND) != null) {
             bSecureSend = ((Boolean) gwConfigurationMap.get(SoulissBindingConstants.CONFIG_SECURE_SEND)).booleanValue();
         }
-
     }
 
     @Override
@@ -184,5 +183,4 @@ public class SoulissT12Handler extends SoulissGenericHandler {
         }
         return -1;
     }
-
 }
